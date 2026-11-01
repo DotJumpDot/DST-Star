@@ -31,6 +31,8 @@ each on a rebase. Everything else about Star is profile config
 | `scripts/verify-star-transcript.tsx` | +8 checks: one-line hiding/flattening/▸/Ctrl+O and the `MCP › Constellation › Run Code` naming (27 total). |
 | `scripts/verify-side-panel-{mouse,registry,layout}.tsx` | navigator contract replaces the carousel assertions (arrow cycling, only-active-icon, keyboard → routing in the registry fixture). |
 | `profile/cordis.patch.yml` | `oneLineToolCards: true` joins the comfort rows (explicit even though the fork default is ON). |
+| `scripts/merge-patch.mjs` (repo scaffolding) | NEW — installer merge: the repo profile patch stays the source of truth; top-level rows that exist only in the INSTALLED patch (written by the TUI's /provider editor or the plugin manager) are carried over verbatim; timestamped `.bak` before every write. The old blind `copy /y` erased the user's custom provider on every reinstall. |
+| `scripts/install-fork.bat` | the patch step is the merge, not a copy. |
 
 Install-time note (not a file diff): the a0630f4 bundle's first-party
 plugins `@deepseek-ai/dsh-code-runtime-worker-thread@0.1.0-rc.6` and

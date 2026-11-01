@@ -76,6 +76,18 @@ live API keys.
    naming (`mcpToolDisplayName` in AssistantToolUseMessage). The MCP name
    shows on cards whose view has NO title; a structured card view with
    its own title still renders the title (upstream behavior).
+10. **The TUI writes user rows into the INSTALLED profile patch**
+    (`~/.dsh/profiles/dst-star/cordis.patch.yml`): a custom cloud
+    provider added via `/provider`, plugin-manager changes. The installer
+    therefore MERGES instead of copying (`scripts/merge-patch.mjs`): the
+    repo patch stays the source of truth for its rows, user-only rows are
+    carried over, and a timestamped `.bak` is kept. Never reinstall with a
+    blind copy — that wiped the user's provider once (2026-11-02).
+11. **The splash font rotates by local date** (`dsh-tui.splashFont:
+    daily` is upstream's default; Nov 1-2 land on the `stencil` cutout
+    face, which reads as broken glyphs). Star pins `splashFont: bold` in
+    the profile. All siblings rotate the same way — Comet/Moon look
+    "weird" on the same days; fix per-profile there if wanted.
 
 ## Next steps, in order
 

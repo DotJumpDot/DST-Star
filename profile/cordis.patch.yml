@@ -26,6 +26,11 @@
     # cards, ported 2026-11-02; default on even without this row).
     lang: en
     fullscreen: true
+    # Pin the base splash face. Upstream rotates the big-text font by local
+    # date (dsh-tui.splashFont: daily is the default) — Nov 1-2 land on the
+    # `stencil` cutout face, whose notched letters read as broken glyphs.
+    # `bold` is the stock look the family screenshots show.
+    splashFont: bold
     terminalImages: true
     pageMargin: normal
     toolBackground: none

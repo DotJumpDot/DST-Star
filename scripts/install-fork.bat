@@ -63,9 +63,14 @@ echo [dsts-install] installing fork into profile %PROFILE% ...
 call dsh plugin --profile %PROFILE% add "%DIST%\dst-star.tgz"
 if errorlevel 1 (echo [dsts-install] fork install failed & exit /b 1)
 
-echo [dsts-install] copying profile patch layer ...
+echo [dsts-install] copying profile patch layer (merging TUI-written rows) ...
 if not exist "%PROFILEDIR%" mkdir "%PROFILEDIR%"
-copy /y "%ROOT%\profile\cordis.patch.yml" "%PROFILEDIR%\cordis.patch.yml" >nul
+rem The TUI persists user rows (a custom cloud provider added via /provider,
+rem plugin-manager changes) into the installed cordis.patch.yml. A blind copy
+rem would wipe them on every reinstall - merge instead: the repo file stays
+rem the source of truth, user-only rows are carried over (scripts/merge-patch.mjs).
+node "%ROOT%\scripts\merge-patch.mjs" "%ROOT%\profile\cordis.patch.yml" "%PROFILEDIR%\cordis.patch.yml"
+if errorlevel 1 (echo [dsts-install] patch merge failed & exit /b 1)
 
 rem Pin the bundle list to exactly the two Star bundles: dsh plugin add
 rem maintains the dependency row; the bundles array is what boots, so an

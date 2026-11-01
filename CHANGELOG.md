@@ -5,6 +5,21 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-02 — Fix: splash font pinned. The "twisted/deformed" splash
+  glyphs were upstream's date-rotated splash font — Nov 1-2 land on the
+  `stencil` cutout face (all siblings rotate the same way; stock looks
+  "normal" because its data dir holds a user-set font). Star pins
+  `dsh-tui.splashFont: bold` in the profile (stock look every day); the
+  deepseek-brand big words remain DEEPSEEK/HARNESS by upstream design at
+  this pin (the font table carries them; BRAND_SPLASH_WORDS only drives
+  other brands + the narrow plain name).
+- 2026-11-02 — Fix: installer stops erasing the user's provider. The TUI
+  persists /provider rows into the INSTALLED profile patch; the
+  installer's blind copy wiped them on every harness-fix reinstall.
+  scripts/merge-patch.mjs (NEW) merges instead: repo patch stays source
+  of truth, user-only rows carried verbatim, timestamped .bak kept;
+  install-fork.bat uses it. Re-add your provider once — after this it
+  survives reinstalls.
 - 2026-11-02 — Comet parity pass (user ask): PanelBar swapped to the
   Comet navigator (only the active panel's icon + title between the
   arrows — no more icon wall); one-line tool cards ported (settled
