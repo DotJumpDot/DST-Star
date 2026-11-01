@@ -152,7 +152,7 @@ Phase-2 landed notes:
   `dsh plugin add`. They are bundle internals riding the TUI tarball,
   NOT added plugins — the bundle list stays exactly the two Star rows.
 
-### Phase 3 — identity (recommended, keeps Star findable at a glance)
+### Phase 3 — identity (recommended, keeps Star findable at a glance) — DONE 2026-11-01
 
 1. `star` theme: copy `pink-night`'s structure into `starlightTheme`
    exactly the way Moon did (see `C:\Code\DST-Moon\vendor\dsh-tui\src\
@@ -172,6 +172,23 @@ Phase-2 landed notes:
 
 **Acceptance:** shortcut + `dsts` both show the blue identity in both
 shells; verify script green; icon correct in Explorer (no stale cache).
+✔ (2026-11-01)
+
+Phase-3 landed notes:
+- Moon's sidebar `BrandHeader` wordmark does NOT exist upstream at the
+  a0630f4 pin (it was a Comet/Moon fork feature) — the wordmark surface
+  here is the splash words (branding.ts) + the tagline, which at this pin
+  routes through i18n `logo-tagline`, not BRAND_TAGLINE (whose deepseek
+  entry is unused).
+- verify-star-transcript.tsx: the DSH_TUI_THEME env alone does NOT theme
+  a bare harness render (ThemeProvider's `active` stays null → 'dark');
+  the script mounts `<ThemeProvider theme="star">` explicitly and proves
+  the palette is live via markdown-baked SGR (permission/subtle), the
+  only star-unique colors a plain-text transcript actually paints.
+- The shortcut script ended up as `scripts/make-shortcut.js` (WScript.Shell
+  via cscript), not python: pywin32 is absent on this box and the ctypes
+  vtable attempt was fragile. A committed .js file still satisfies the
+  lesson-5 intent (no inline-PowerShell backslash mangling, no deps).
 
 ### Phase 4 — verify + handoff docs
 

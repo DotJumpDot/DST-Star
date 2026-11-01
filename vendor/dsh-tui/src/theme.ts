@@ -230,6 +230,7 @@ export function isThemeColorKey(value: unknown): value is ThemeColorKey {
  */
 export const THEME_NAMES = [
   'dark',
+  'star',
   'dark-ansi',
   'light',
   'pink-night',
@@ -407,6 +408,113 @@ const darkTheme: Theme = {
   subagentStatusRunning: rgb('#7DA1DE'),
   subagentStatusCompleted: rgb('#82B89D'),
   subagentStatusFailed: rgb('#DA8A93'),
+}
+
+/**
+ * Star's context-bar ramp: the night deepens from deep navy to the
+ * starlight tip — the same four-step structure as the sakura ramp,
+ * rotated to the starlight-blue family.
+ */
+const STAR_BAR_RAMP: ContextBarRamp = {
+  contextBarSystem: rgb('#1E2A45'), // deep navy
+  contextBarPrompt: rgb('#2E4066'),
+  contextBarAssistant: rgb('#3E5A8C'),
+  contextBarThinking: rgb('#5A82BC'),
+  contextBarTools: rgb('#8FC1F2'), // starlight tip
+}
+
+/**
+ * DST-Star (`star`): pink-night's concept with ONE hue family — everything
+ * that pink-night paints pink, star paints STARLIGHT BLUE: accent #8FC1F2,
+ * ice-core shimmer #CFE8FF, soft blue permission #7FB0E0, blue borders
+ * #6FA8DC, star-blue ide #3E7BC8, steel second voice #8FA8C8 where
+ * pink-night ran violet. Text is cool ivory (#ECF2FA) on deep-navy
+ * neutrals (#1A2440 tool cards over #0F1526 ink, steel borders #3A4C6A) —
+ * the palette of the assets/dst-star.ico family tile. The small
+ * functional escapes (green exec/strings, cyan function, amber numbers)
+ * carry over from pink-night unchanged. Role base: `dark`. Ignition is
+ * the icon's hot ice core (#CFE8FF) over the navy band.
+ */
+const starlightTheme: Theme = {
+  autoAccept: rgb('#8FA8D8'),
+  bashBorder: rgb('#6FA8DC'),
+  accent: rgb('#8FC1F2'),
+  toolNameMutate: rgb('#E5C07B'),
+  toolNameExec: rgb('#72C4CF'),
+  accentShimmer: rgb('#CFE8FF'),
+  activity: rgb('#8FC1F2'),
+  activityShimmer: rgb('#CFE8FF'),
+  permission: rgb('#7FB0E0'),
+  permissionShimmer: rgb('#B8DCF5'),
+  planMode: rgb('#7FB596'),
+  ide: rgb('#3E7BC8'),
+  promptBorder: rgb('#3A4C6A'),
+  promptBorderShimmer: rgb('#6FA8DC'),
+  text: rgb('#ECF2FA'),
+  inverseText: rgb('#0F1526'),
+  inactive: rgb('#96A6BC'),
+  inactiveShimmer: rgb('#B4C4D8'),
+  subtle: rgb('#6A7A94'),
+  suggestion: rgb('#7FB0E0'),
+  remember: rgb('#7FB0E0'),
+  background: rgb('#4A86D0'),
+  success: rgb('#8FC9A4'),
+  error: rgb('#E66A6A'),
+  warning: rgb('#E3B56C'),
+  merged: rgb('#8FA8C8'),
+  warningShimmer: rgb('#F0CB8E'),
+  diffAdded: rgb('#2E3A2F'),
+  diffRemoved: rgb('#3E2A3A'),
+  diffAddedDimmed: rgb('#2F3630'),
+  diffRemovedDimmed: rgb('#36282F'),
+  diffAddedWord: rgb('#5E9B72'),
+  diffRemovedWord: rgb('#C96B7B'),
+  toolCardBackground: rgb('#1A2440'),
+  toolCardBackgroundDim: rgb('#141C33'),
+  toolDotExec: rgb('#7FB596'),
+  toolDotRead: rgb('#7FB6C9'),
+  toolDotWrite: rgb('#9CB0E0'),
+  toolDotWeb: rgb('#8FC1F2'),
+  toolDotTask: rgb('#7FA0D0'),
+  syntaxKeyword: rgb('#6FA8DC'),
+  syntaxString: rgb('#8FC9A4'),
+  syntaxComment: rgb('#74849C'),
+  syntaxNumber: rgb('#E3B56C'),
+  syntaxFunction: rgb('#7FC4CE'),
+  syntaxType: rgb('#A8BCE8'),
+  syntaxVariable: rgb('#D2DCEA'),
+  syntaxOperator: rgb('#96A6BC'),
+  syntaxPunctuation: rgb('#8090A8'),
+  syntaxConstant: rgb('#5A8AD0'),
+  professionalBlue: rgb('#6FA8DC'),
+  chromeYellow: rgb('#E3B56C'),
+  mascotBody: rgb('#6F9FD8'),
+  inputBackground: rgb('#000000'),
+  userMessageBackground: '',
+  userMessageBackgroundHover: rgb('#3A5680'),
+  messageActionsBackground: rgb('#232E4A'),
+  selectionBg: rgb('#34486A'),
+  bashMessageBackgroundColor: rgb('#1B2742'),
+  memoryBackgroundColor: rgb('#202B45'),
+  rate_limit_fill: rgb('#8FC1F2'),
+  rate_limit_empty: rgb('#26314A'),
+  fastMode: rgb('#E09A58'),
+  fastModeShimmer: rgb('#ECB478'),
+  userPromptLabel: rgb('#FFDF80'),
+  subagentBullet: rgb('#7FA0D0'),
+  subagentDescription: rgb('#ECF2FA'),
+  subagentModel: rgb('#96A6BC'),
+  subagentElapsed: rgb('#96A6BC'),
+  subagentToolName: rgb('#8FC1F2'),
+  subagentStatusRunning: rgb('#8FC1F2'),
+  subagentStatusCompleted: rgb('#8FC9A4'),
+  subagentStatusFailed: rgb('#E66A6A'),
+  // The family's bar ramp and crest: ignition is the icon's hot ice core
+  // over the navy band (ignitionDim shares toolCardBackgroundDim's tone).
+  ...STAR_BAR_RAMP,
+  ignition: rgb('#CFE8FF'),
+  ignitionDim: rgb('#141C33'),
+  cursor: '',
 }
 
 /**
@@ -1268,6 +1376,8 @@ export function getTheme(themeName: ThemeName): Theme {
     // resolver round-trip there re-enters theme-file parsing recursively.
     case 'dark':
       return darkTheme
+    case 'star':
+      return starlightTheme
     case 'dark-ansi':
       return darkAnsiTheme
     // Built-in bases must resolve without touching the custom-theme resolver
@@ -1288,7 +1398,9 @@ export function getTheme(themeName: ThemeName): Theme {
     case 'pink-day':
       return pinkDayTheme
     case AUTO_THEME_NAME:
-      return autoBase === 'light' ? lightTheme : darkTheme
+      // DST-Star fork: auto-dark resolves to the starlight palette (Moon's
+      // convention) — a dark terminal boots Star's blue identity.
+      return autoBase === 'light' ? lightTheme : starlightTheme
     default: {
       // Static file themes keep precedence over runtime contributions. A
       // resolver that returns undefined declines the name and lets the next
@@ -1343,6 +1455,7 @@ export function isLightThemeActive(themeName: ThemeName): boolean {
   if (
     theme === darkTheme ||
     theme === darkAnsiTheme ||
+    theme === starlightTheme ||
     theme === pinkNightTheme ||
     theme === pinkAnsiTheme ||
     theme === claudeDarkTheme ||

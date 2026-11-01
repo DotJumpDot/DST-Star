@@ -945,7 +945,7 @@ const dict = {
   'upstream-retry-enabled': { zh: '已为当前渠道 {{routes}} 启用上游断链自动重试（最多重试 5 次；cordis.yml upstreamRetry: false 可关闭）', en: 'Upstream auto-retry enabled for {{routes}} (the route in use) — up to 5 retries per request (opt out with upstreamRetry: false in cordis.yml)' },
 
   // ── components/LogoV2.tsx ───────────────────────────────────────────
-  'logo-tagline': { zh: '探索未至之境！', en: 'Explore the uncharted!' },
+  'logo-tagline': { zh: '星海日常，跑在你的云端模型上', en: 'The starlight terminal,\npowered by your cloud models' }, // DST-Star fork tagline
   // Star easter egg (bottom welcome line on ~1/20 of mounts, see
   // components/splashEggs.ts): the sentence is split around the repo
   // hyperlink — lead + link + tail — so both halves are translatable and

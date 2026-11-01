@@ -5,6 +5,18 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-01 — Phase 3 identity (star theme + rebrand + shortcut):
+  starlightTheme (pink-night structure recolored to one starlight-blue
+  family: accent #8FC1F2, ice shimmer #CFE8FF, navy cards/ink, steel
+  borders; STAR_BAR_RAMP) registered as 'star' with auto-dark resolving
+  to it; splash words DST/STAR + starlight tagline (i18n logo-tagline);
+  scripts/verify-star-transcript.tsx NEW (19 checks: brand words,
+  palette identity/auto/dark-role, rendered-transcript star SGR via
+  ThemeProvider lock, plain-digit stats rail); desktop DST-Star.lnk →
+  %APPDATA%\npm\dsts.cmd with cache-proof ~/.dsh/icons/dst-star-v2.ico
+  via scripts/make-shortcut.js (cscript/WScript — ctypes-COM python was
+  fragile, pywin32 absent); fork repacked + reinstalled; boot verified
+  again (process alive, ~/.dst-star only, siblings 0 writes).
 - 2026-11-01 — Phase 2 profile + launchers + install (dsts boots):
   profile/cordis.patch.yml hand-written (no provider pin, onboarding
   enabled; comfort keys lang/fullscreen/terminalImages/pageMargin/

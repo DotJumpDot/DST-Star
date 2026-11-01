@@ -72,7 +72,9 @@ export interface BrandSplashWords {
 
 /** 各品牌的开屏标题词（大字重解字距见 `splashFonts.withTagline`）。 */
 export const BRAND_SPLASH_WORDS: Readonly<Record<Brand, BrandSplashWords>> = Object.freeze({
-  deepseek: Object.freeze({ top: 'DEEPSEEK', bottom: 'HARNESS', plain: 'DeepSeek Harness' }),
+  // DST-Star fork: the splash words read DST / STAR (Moon's convention —
+  // the fork's identity on the boot screen).
+  deepseek: Object.freeze({ top: 'DST', bottom: 'STAR', plain: 'DST Star' }),
   claude: Object.freeze({ top: 'CLAUDE', bottom: 'CODE', plain: 'Claude Code' }),
   codex: Object.freeze({ top: 'CODEX', bottom: 'HARNESS', plain: 'Codex' }),
 })
