@@ -20,7 +20,7 @@ import { useRevealVersion } from '../../hooks/useRevealVersion.js'
 import { primaryComboString } from '../../utils/keymap.js'
 import { agentMessageStateColor, agentMessageStateText } from './TranscriptLeaves.js'
 import type { AgentMessageState } from './agentTeam.js'
-import { liveOutputMaxLines, liveOutputView } from './liveOutputLines.js'
+import { fitOutputLine, liveOutputMaxLines, liveOutputView } from './liveOutputLines.js'
 import { isPatchDiff, parseFilePatch, patchHeader, type ToolPatchDiff } from '../diffPatch.js'
 
 type Props = {
@@ -66,6 +66,11 @@ type Props = {
    * `+N lines` hint; verbose/expanded cards render the full title.
    */
   foldTerminalCommand?: boolean
+  /** DST-Star port (Comet one-line cards, settings
+   *  `dsh-tui.oneLineToolCards`; on by default): a settled terminal / MCP /
+   *  Read / Grep card keeps its header line only — the row (click / Ctrl+O)
+   *  expands it. Errors and split diffs keep their previews. */
+  oneLineToolCards?: boolean
   /**
    * Smooth streaming reveal (settings `dsh-tui.smoothStreaming`): the card
    * BODY (diff hunks / write content — model-authored prose, not tool
@@ -111,12 +116,39 @@ const TOOL_NAME_KEYS: Record<string, I18nKey> = {
   web_search: 'tool-name-web_search',
 }
 
+/** DST-Star port (Comet, user ask): words that stay uppercased in a
+ *  prettified tool name — an all-lowercase `api` reads like a typo. */
+const NAME_ACRONYMS = new Set(['http', 'https', 'url', 'api', 'otp', 'oob', 'mcp', 'ui', 'id'])
+
+function titleWords(raw: string): string {
+  return raw.split(/[_-]+/).filter(Boolean).map(word =>
+    NAME_ACRONYMS.has(word.toLowerCase())
+      ? word.toUpperCase()
+      : word[0]!.toUpperCase() + word.slice(1).toLowerCase(),
+  ).join(' ')
+}
+
+/** `mcp__<server>__<tool>` → `MCP › Server › Tool Words` (Comet, user ask
+ *  2026-10-27: the raw snake name is long and ugly in the header). The
+ *  `browser_` prefix every Constellation browser tool carries and the
+ *  model-facing `_unsafe` suffix are dropped —
+ *  `mcp__constellation__browser_run_code_unsafe` reads
+ *  `MCP › Constellation › Run Code`. */
+function mcpToolDisplayName(name: string): string | undefined {
+  const match = /^mcp__([A-Za-z0-9_-]+)__(.+)$/.exec(name)
+  if (match === null) return undefined
+  const tool = match[2]!.replace(/^browser_/, '').replace(/_unsafe$/, '')
+  return `MCP › ${titleWords(match[1]!)} › ${titleWords(tool)}`
+}
+
 function displayName(name: string, displayKey?: string): string {
   // A backend that names its tools its own way (Claude `Read`, `Bash`)
   // supplies the key with the card view; the raw name is the fallback.
   if (displayKey !== undefined) return tOr(displayKey, name)
   const key = TOOL_NAME_KEYS[name]
   if (key !== undefined) return t(key)
+  const mcp = mcpToolDisplayName(name)
+  if (mcp !== undefined) return mcp
   if (name.length === 0) return name
   return name[0]!.toUpperCase() + name.slice(1)
 }
@@ -548,7 +580,7 @@ function toolCardMetaTooltip(tool: ToolRow, isRunning: boolean, isError: boolean
   return parts.join(' · ')
 }
 
-function HeaderTitle({ name, title, isTerminal, folded, displayArgs, argsLanguage, nameColor, filePath, onOpenFile, metaTooltip, headerTextBudget }: {
+function HeaderTitle({ name, title, isTerminal, folded, displayArgs, argsLanguage, nameColor, filePath, onOpenFile, metaTooltip, headerTextBudget, singleLine = false }: {
   name: string
   title: string | undefined
   isTerminal: boolean
@@ -578,6 +610,11 @@ function HeaderTitle({ name, title, isTerminal, folded, displayArgs, argsLanguag
    * clipped by the 480-char budget) — this budget gates just that cut.
    */
   headerTextBudget: number
+  /** DST-Star port (Comet one-line cards): flatten the title to one row —
+   *  pre-cut to the budget so flex never wraps the elapsed chip under it.
+   *  Running and error cards use it too (their bodies stay, the header must
+   *  not sprawl); verbose/expanded cards render the full multi-line title. */
+  singleLine?: boolean
 }): React.ReactNode {
   // Hover tooltip rule: pop ONLY when the header genuinely hides content —
   // a folded terminal script, args clipped past the 480-char budget, or a
@@ -585,27 +622,66 @@ function HeaderTitle({ name, title, isTerminal, folded, displayArgs, argsLanguag
   // that fully fits its row stays silent: a float that repeats or annotates
   // text already visible next to the pointer is noise, not detail. Empty
   // content is a no-op inside the hook.
+  const flatTitle = title === undefined ? undefined : title.replace(/\s+/gu, ' ').trim()
   const headerTooltip = useTooltip(() => {
     const meta = metaTooltip()
     const withMeta = (full: string): string => (meta === '' ? full : `${full}\n${meta}`)
+    if (singleLine && flatTitle !== undefined) {
+      return stringWidth(flatTitle) > headerTextBudget ? withMeta(title ?? '') : ''
+    }
     if (folded !== undefined) return withMeta(title ?? '')
     if (title === undefined && clipHeaderArgs(displayArgs) !== displayArgs) return withMeta(displayArgs)
     // Width truncation: only the non-terminal title Text is truncate-end —
     // a long one-line title is really cut by layout when it overflows the
     // row. Terminal titles WRAP instead (default Text wrap, nothing hidden)
     // and args within the 480 budget wrap too; they never reach this gate.
-    if (title !== undefined && !isTerminal && stringWidth(title.trim()) > headerTextBudget) {
+    if (title !== undefined && !isTerminal && stringWidth(flatTitle ?? '') > headerTextBudget) {
       return withMeta(title.trim())
     }
     // Header fully visible: nothing hidden, nothing to add — stay silent.
     return ''
   })
+  if (singleLine && title !== undefined) {
+    // Pre-cut to the budget instead of trusting flex: Yoga shrinks every
+    // child a little, so a truncate-end title alone still lets the elapsed
+    // chip wrap onto a second row. The tooltip gate above keeps comparing
+    // the ORIGINAL flatTitle, so a cut header still discloses on hover.
+    const cutTo = (width: number): string | undefined =>
+      width <= 0 ? '' : stringWidth(flatTitle ?? '') > width ? fitOutputLine(flatTitle ?? '', width) : flatTitle
+    if (isTerminal) {
+      return (
+        <>
+          <Box flexShrink={0}>
+            <Text bold color={nameColor} wrap="truncate-end">{name}</Text>
+          </Box>
+          <Box flexWrap="nowrap" overflow="hidden" {...headerTooltip}>
+            <Text wrap="truncate-end">{`(${cutTo(headerTextBudget - stringWidth(name) - 2) ?? ''})`}</Text>
+          </Box>
+        </>
+      )
+    }
+    return (
+      <Box flexWrap="nowrap" overflow="hidden" {...headerTooltip}>
+        <Text bold color={nameColor} wrap="truncate-end">{cutTo(headerTextBudget) ?? ''}</Text>
+      </Box>
+    )
+  }
   if (title === undefined) {
+    // MCP cards (Comet, user ask 2026-10-27 night): a dim › between the
+    // prettified `MCP › Server › Tool` name and its args gives the JSON
+    // breathing room — `Scope Set › ({"engagement":…})` instead of
+    // `Scope Set({"engagement":…})`.
+    const mcpSeparator = name.startsWith('MCP › ') ? ' ›' : undefined
     return (
       <>
         <Box flexShrink={0}>
           <Text bold color={nameColor} wrap="truncate-end">{name}</Text>
         </Box>
+        {displayArgs !== '' && mcpSeparator !== undefined && (
+          <Box flexShrink={0}>
+            <Text dimColor>{mcpSeparator}</Text>
+          </Box>
+        )}
         {displayArgs !== '' && (
           <Box flexWrap="nowrap" {...headerTooltip}>
             <Text>(</Text>
@@ -707,6 +783,7 @@ export function AssistantToolUseMessage({
   toolBackground = 'none',
   onOpenFile,
   foldTerminalCommand = false,
+  oneLineToolCards = true,
   smoothReveal = false,
   fresh = false,
   revealVersion,
@@ -793,10 +870,21 @@ export function AssistantToolUseMessage({
   // pop a tooltip. No extra slack, and the tool name is NOT deducted — a
   // non-terminal title carries its own first word, so double-counting name
   // pushed the gate ~10 cols too tight and floated fully visible titles.
-  const headerTextBudget = Math.max(0, columns - 2 - (interactive ? 2 : 0)
-    - (!isRunning && elapsedText !== '' ? stringWidth(elapsedText) : 0))
   const useSplitDiff = !isError && view?.card === 'diff' &&
     (diffLayout === 'split' || (diffLayout !== 'unified' && columns >= SPLIT_DIFF_MIN_COLS))
+  // DST-Star port (Comet one-line cards): a settled terminal / MCP / Read /
+  // Grep card keeps its header line only. The row is the toggle (click /
+  // Ctrl+O expands), so a persistent `▸` affordance rides the header even
+  // when the pointer is elsewhere. SendMessage relay cards keep their
+  // preview body: the message text + summary IS the card, and hiding it
+  // would leave a bare `SendMessage → target` header.
+  const oneLineCard = oneLineToolCards && !verbose && !isRunning && !sendMessageRawOpen &&
+    sendMessage === undefined && !isError && !useSplitDiff &&
+    (view === undefined || view.card === 'terminal' || view.card === 'generic' ||
+      view.card === 'read' || view.card === 'search')
+  const headerTextBudget = Math.max(0, columns - 2 - (interactive ? 2 : 0)
+    - (!isRunning && elapsedText !== '' ? stringWidth(elapsedText) : 0)
+    - (oneLineCard ? 2 : 0))
   // Live output of the running call: the newest lines of the bounded tail,
   // sanitized and cut to the body width in cells (liveOutputLines.ts).
   // Memoized on the tail itself, so the 1 s elapsed tick re-renders without
@@ -845,6 +933,13 @@ export function AssistantToolUseMessage({
     if (isRunning && body.length === 0) {
       body = [dim(t('tool-running-elapsed', { duration: formatDuration(Math.max(0, Date.now() - (tool.startedAt ?? Date.now()))) }))]
     }
+  }
+  // DST-Star port (Comet one-line cards): one-line cards drop the preview
+  // body and its fold hint; the header row (with its persistent ▸) is the
+  // card. Running cards are exempt above; error verdicts keep the normal
+  // body (a stack trace must stay readable), split diffs are untouched.
+  if (oneLineCard) {
+    body = []
   }
   const cap = view?.card === 'diff' ? DIFF_BODY_MAX_LINES : TEXT_BODY_MAX_LINES
   // 展开态（点击/verbose）的 SendMessage 卡不截断——raw 层就是「全量」。
@@ -976,10 +1071,15 @@ export function AssistantToolUseMessage({
             isError={isError}
             toolName={tool.name}
           />
-          <HeaderTitle name={name} title={headerTitle} isTerminal={headerIsTerminal} folded={foldedHeader} displayArgs={displayArgs} argsLanguage={argsLanguage} nameColor={toolNameColor(tool.name, view?.category ?? tool.callView?.category)} filePath={filePath} onOpenFile={onOpenFile} metaTooltip={() => toolCardMetaTooltip(tool, isRunning, isError)} headerTextBudget={headerTextBudget} />
+          <HeaderTitle name={name} title={headerTitle} isTerminal={headerIsTerminal} folded={foldedHeader} displayArgs={displayArgs} argsLanguage={argsLanguage} nameColor={toolNameColor(tool.name, view?.category ?? tool.callView?.category)} filePath={filePath} onOpenFile={onOpenFile} metaTooltip={() => toolCardMetaTooltip(tool, isRunning, isError)} headerTextBudget={headerTextBudget} singleLine={!verbose && (oneLineCard || isError || isRunning)} />
           {!isRunning && (
             <Box flexWrap="nowrap">
               <Text dimColor={!hovered}>{elapsedText}</Text>
+            </Box>
+          )}
+          {oneLineCard && !hovered && (
+            <Box flexShrink={0}>
+              <Text color="subtle">{' ▸'}</Text>
             </Box>
           )}
           {hovered && (

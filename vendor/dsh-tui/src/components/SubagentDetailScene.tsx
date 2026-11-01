@@ -726,6 +726,10 @@ export function SubagentDetailScene({
                           marginTopOnTurn={margin}
                           verbose={expandedLeaf === row.key}
                           isExpanded={expandedLeaf === row.key}
+                          // The child transcript is a DETAIL page: keep the
+                          // result preview visible instead of inheriting the
+                          // main transcript's one-line card mode.
+                          oneLineToolCards={false}
                           onClick={() => setExpandedLeaf(prev => prev === row.key ? null : row.key)}
                         />
                       )

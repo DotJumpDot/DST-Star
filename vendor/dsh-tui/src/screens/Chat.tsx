@@ -7176,6 +7176,7 @@ export function Chat({
           jobGroupFold={channel.jobGroupFold}
           toolBackground={channel.toolBackground}
           foldTerminalCommand={channel.foldTerminalCommand}
+          oneLineToolCards={channel.oneLineToolCards}
           turnUsageRow={channel.turnUsageRow}
           smoothStreaming={channel.smoothStreaming}
           activityFrames={channel.activityFrames}

@@ -171,29 +171,24 @@ try {
   check('a boot: active title is centered on Todo', await settled(() => has('Todo'), { timeoutMs: 4000 }))
   // DST-Star fork: the brand header rides above the bar; find the bar by its arrows.
   const barAt = (view: string[]): string => view.find(line => line.includes('◀')) ?? ''
-  check('a boot: inactive panels show their own icons', (barAt(lines()).match(/[▸◆]/g) ?? []).length === 2, barAt(lines()).trim())
+  const bootBar = barAt(lines())
+  check('a boot: only the active panel icon renders', bootBar.includes('≡ Todo') && !bootBar.includes('◆') && !bootBar.includes('▸'), bootBar.trim())
+  check('a boot: the bar carries both nav arrows', bootBar.includes('◀') && bootBar.includes('▶'), bootBar.trim())
   check('a boot: no ⤢ for a panel without a fullscreen form', !has('⤢'))
 
-  const agentsIcon = findText('◆')
-  check('b hover: agents icon located', agentsIcon !== null, JSON.stringify(agentsIcon))
-  if (agentsIcon !== null) {
-    check('b hover: icon starts dim', !boldAt(agentsIcon.col, agentsIcon.row))
-    motion(agentsIcon.col, agentsIcon.row)
-    check('b hover: icon brightens and reveals its title', await settled(() => boldAt(agentsIcon.col, agentsIcon.row) && has('Agents'), { timeoutMs: 4000 }))
-    motion(agentsIcon.col + 5, agentsIcon.row + 3)
-    check('b hover: tooltip disappears after leaving the icon', await settled(() => !has('Agents'), { timeoutMs: 4000 }))
+  // ── b/c. arrows cycle the navigator (Todo → Jobs → Agents, wrapping) ───
+  const clickArrow = (glyph: '◀' | '▶'): boolean => {
+    const cell = findText(glyph)
+    if (cell === null) return false
+    click(cell.col, cell.row)
+    return true
   }
-
-  if (agentsIcon !== null) click(agentsIcon.col + 1, agentsIcon.row)
-  check('c click: icon hit area selects Agents', await settled(() => has('Agents') && has('⤢'), { timeoutMs: 4000 }))
-  const nextArrow = findText('▶')
-  check('c arrows: right arrow located', nextArrow !== null)
-  if (nextArrow !== null) click(nextArrow.col, nextArrow.row)
-  check('c arrows: next wraps from Agents to Todo', await settled(() => has('Todo') && !has('⤢'), { timeoutMs: 4000 }))
-  const previousArrow = findText('◀')
-  check('c arrows: left arrow located', previousArrow !== null)
-  if (previousArrow !== null) click(previousArrow.col, previousArrow.row)
-  check('c arrows: previous wraps from Todo to Agents', await settled(() => has('Agents') && has('⤢'), { timeoutMs: 4000 }))
+  check('b arrows: right arrow located', findText('▶') !== null, JSON.stringify(findText('▶')))
+  check('b arrows: Todo → Jobs', clickArrow('▶') && await settled(() => has('Jobs'), { timeoutMs: 4000 }))
+  check('b arrows: Jobs → Agents', clickArrow('▶') && await settled(() => has('Agents') && has('⤢'), { timeoutMs: 4000 }))
+  check('c arrows: left arrow located', findText('◀') !== null)
+  check('c arrows: previous wraps from Agents to Jobs', clickArrow('◀') && await settled(() => has('Jobs'), { timeoutMs: 4000 }))
+  check('c arrows: next returns to Agents', clickArrow('▶') && await settled(() => has('Agents') && has('⤢'), { timeoutMs: 4000 }))
 
   // ── d. ⤢ hands the ACTIVE panel id to the host ─────────────────────────
   const expand = findText('⤢')
@@ -240,7 +235,7 @@ try {
     await settled(() => lines2().some(line => line.includes('Jobs')), { timeoutMs: 4000 })
     // DST-Star fork: compact brand header (2 rows + gap) sits above the bar.
     const barRow = lines2()[sidebarBrandRows(NROWS, 0)] ?? ''
-    check('f narrow: eight-panel bar keeps every icon and both arrows', (barRow.match(/[≡ⓘ∿?◆⌗♥]/g) ?? []).length === 7 && barRow.includes('◀') && barRow.includes('▶'), barRow.trim())
+    check('f narrow: navigator shows the active panel only', barRow.includes('Jobs') && barRow.includes('◀') && barRow.includes('▶') && !/[≡ⓘ∿◆⌗♥]/u.test(barRow), barRow.trim())
     check('f narrow: ⤢ stays on the same row', barRow.includes('⤢'), barRow.trim())
     check('f fold: the bar is exactly one row (a rule follows it)', (lines2()[sidebarBrandRows(NROWS, 0) + 1] ?? '').includes('─'), (lines2()[sidebarBrandRows(NROWS, 0) + 1] ?? '').trim())
   } finally {

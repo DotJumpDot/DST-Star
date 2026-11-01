@@ -68,6 +68,14 @@ live API keys.
 8. **Stats rail:** if any stat/number display ever changes, it stays
    plain single-color digits — no gauges/sparklines
    (verify-star-transcript.tsx locks the digit-line rule).
+9. **Fork-added features that upstream doesn't have (2026-11-02 Comet
+   parity pass):** the PanelBar navigator (upstream at a0630f4 ships a
+   centered-title carousel — a rebase must re-apply the navigator file),
+   one-line tool cards (`dsh-tui.oneLineToolCards`, default ON, wiring
+   mirrors foldTerminalCommand at every layer), and the MCP display
+   naming (`mcpToolDisplayName` in AssistantToolUseMessage). The MCP name
+   shows on cards whose view has NO title; a structured card view with
+   its own title still renders the title (upstream behavior).
 
 ## Next steps, in order
 

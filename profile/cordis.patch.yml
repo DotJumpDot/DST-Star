@@ -21,13 +21,15 @@
     # NO provider / model pin: the onboarding wizard and the built-in
     # catalog decide; the user logs in with their own cloud credentials.
     # Comfort settings carried over from the Comet fork's defaults —
-    # every key verified against the a0630f4 settings schema. (Comet's
-    # oneLineToolCards was dropped: the key no longer exists upstream.)
+    # every key verified against the a0630f4 settings schema, except
+    # oneLineToolCards, which the fork re-adds (Comet's one-line tool
+    # cards, ported 2026-11-02; default on even without this row).
     lang: en
     fullscreen: true
     terminalImages: true
     pageMargin: normal
     toolBackground: none
+    oneLineToolCards: true
     foldTerminalCommand: true
     whaleIdle: true
     whaleGirl: true

@@ -183,7 +183,7 @@ function assertSplitFrame(name: string, frame: Frame, geo: { chat: number; panel
   check(name + ': brand header carries DST·Star', lines.slice(0, BRAND_ROWS).some(line => line.includes('DST·Star')),
     JSON.stringify(lines.slice(0, BRAND_ROWS)))
   check(name + ': row ' + BRAND_ROWS + ' carries the active title', lines[BRAND_ROWS].includes('待办'), JSON.stringify(lines[BRAND_ROWS]))
-  check(name + ': row ' + BRAND_ROWS + ' shows the inactive panel icons', lines[BRAND_ROWS].includes('▸') && lines[BRAND_ROWS].includes('◆'), JSON.stringify(lines[BRAND_ROWS]))
+  check(name + ': row ' + BRAND_ROWS + ' shows only the active panel icon', lines[BRAND_ROWS].includes('≡ 待办') && !lines[BRAND_ROWS].includes('▸') && !lines[BRAND_ROWS].includes('◆'), JSON.stringify(lines[BRAND_ROWS]))
   // Rules frame the host: the bar's rule and rows-2 are horizontal rules on the panel side.
   const ruleAfter = cells(lines[BRAND_ROWS + 1]).slice(chatCol + 1).join('').trim()
   check(name + ': bar rule right of the divider', ruleAfter.length > 0 && ruleAfter.startsWith('─'), ruleAfter.slice(0, 8))
@@ -252,7 +252,7 @@ check('brand: the gap row is part of the total', sidebarBrandRows(40, 46) === 8 
   await frame2.app.unmount()
 }
 
-// --- 5. Centered carousel title and seven-panel narrow layout ------------
+// --- 5. Single-tab navigator: arrows + active icon/title only -----------
 {
   const { PanelBar } = await import('../src/components/sidePanel/PanelBar.js')
   const { stringWidth } = await import('../src/ink/stringWidth.js')
@@ -267,19 +267,19 @@ check('brand: the gap row is part of the total', sidebarBrandRows(40, 46) === 8 
   ]
   const frame = await mountTree(28, <PanelBar tabs={tabs} activeId="p3" width={28} focused canExpand />)
   const row = frame.lines()[0] ?? ''
-  const shownTitle = 'P3 long t…'
+  const shownTitle = 'P3 long title'
   const titlePos = termTest.findText(frame.term, shownTitle)
-  check('carousel(28/7): active title truncates to the middle budget', row.includes(shownTitle), JSON.stringify(row))
-  check('carousel(28/7): active title center stays within one cell', titlePos !== null && Math.abs(titlePos.col + stringWidth(shownTitle) / 2 - 13) <= 1, JSON.stringify(titlePos))
-  check('carousel(28/7): both edge arrows and fullscreen affordance fit', row.includes('◀') && row.includes('▶') && row.includes('⤢'), JSON.stringify(row))
-  check('carousel(28/7): all six icons, including the title fallback, stay visible', (row.match(/[≡Nⓘ∿◆♥]/g) ?? []).length === 6, JSON.stringify(row))
-  check('carousel(28/7): unread counts follow their panel icons', row.includes('≡3') && row.includes('ⓘ4') && row.includes('◆2'), JSON.stringify(row))
+  check('nav(28/7): active title is rendered', row.includes(shownTitle), JSON.stringify(row))
+  check('nav(28/7): title is centered between the arrows', titlePos !== null && Math.abs(titlePos.col + stringWidth(shownTitle) / 2 - 12.5) <= 2, JSON.stringify(titlePos))
+  check('nav(28/7): both arrows and the fullscreen affordance fit', row.includes('◀') && row.includes('▶') && row.includes('⤢'), JSON.stringify(row))
+  check('nav(28/7): only the active icon is shown', row.includes('▸') && !/[≡ⓘ∿◆♥]/u.test(row), JSON.stringify(row))
+  check('nav(28/7): inactive unread counts are not rendered', !row.includes('≡3') && !row.includes('ⓘ4') && !row.includes('◆2'), JSON.stringify(row))
   await frame.app.unmount()
 
   const single = await mountTree(28, <PanelBar tabs={[{ id: 'solo', title: 'Solo' }]} activeId="solo" width={28} focused canExpand />)
   const singleTitle = termTest.findText(single.term, 'Solo')
-  check('carousel(single): title remains centered without arrows', singleTitle !== null && Math.abs(singleTitle.col + 2 - 13) <= 1 && !single.lines()[0]!.includes('◀') && !single.lines()[0]!.includes('▶'), JSON.stringify(single.lines()[0]))
-  check('carousel(single): fullscreen affordance remains available', single.lines()[0]!.includes('⤢'))
+  check('nav(single): title remains centered without arrows', singleTitle !== null && Math.abs(singleTitle.col + 2 - 12.5) <= 2 && !single.lines()[0]!.includes('◀') && !single.lines()[0]!.includes('▶'), JSON.stringify(single.lines()[0]))
+  check('nav(single): fullscreen affordance remains available', single.lines()[0]!.includes('⤢'))
   await single.app.unmount()
   applySidePanelPanels('todo,jobs,agents')
 }

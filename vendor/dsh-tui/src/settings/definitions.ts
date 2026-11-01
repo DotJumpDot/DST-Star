@@ -229,6 +229,14 @@ export const SETTING_DEFINITIONS = {
       { value: 'windows', label: 'Windows notification', descriptions: { zh: 'Windows 原生通知' } },
     ],
   },
+  'oneLineToolCards': {
+    label: 'One-line tool cards',
+    descriptions: { zh: '工具卡单行模式' },
+    group: 'conversation',
+    hint: 'Terminal (Bash/Pwsh), MCP, Read and Grep/Glob cards collapse to their header line only; click or Ctrl+O expands. Errors and diffs keep their previews. Default on.',
+    hintDescriptions: { zh: '终端（Bash/Pwsh）、MCP、读取与 Grep/Glob 卡只显示标题一行；点击或 Ctrl+O 展开。错误与 diff 保留预览。默认开启。' },
+    kind: 'boolean',
+  },
   'pageMargin': {
     label: 'Page margin',
     descriptions: { zh: '页边距' },

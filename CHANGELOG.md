@@ -5,6 +5,18 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-02 — Comet parity pass (user ask): PanelBar swapped to the
+  Comet navigator (only the active panel's icon + title between the
+  arrows — no more icon wall); one-line tool cards ported (settled
+  Pwsh/Read/Grep/MCP cards keep their header line with a persistent ▸,
+  Ctrl+O/click expands; errors/diffs/running keep previews; setting
+  dsh-tui.oneLineToolCards, default on, full plumbing chain); MCP cards
+  named `MCP › Server › Tool Words` with a dim › before args; header
+  titles flatten to one pre-cut row. verify-star-transcript 27 checks
+  (8 new); mouse/registry/layout moved to the navigator contract;
+  verify:build 94/103 with the same known 8 + verify:btw suite-flake
+  (passes standalone). Fork repacked/reinstalled; boot + isolation
+  re-verified.
 - 2026-11-01 — Day-one fix: Comet-style sidebar brand header ported. The
   Phase-3 plan's `DST·Star` wordmark had been skipped (upstream at the
   new pin has no BrandHeader); ported from Moon: sidebarBrand.ts (mascot

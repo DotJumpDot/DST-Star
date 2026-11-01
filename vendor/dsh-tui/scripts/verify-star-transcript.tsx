@@ -12,6 +12,10 @@
  *     is live in the render, not just resolvable);
  *  4. stats stay plain: no sparkline/gauge glyphs anywhere on the screen
  *     (numbers render as digits, single color — the family rail).
+ *  5. DST-Star port (Comet one-line cards): settled Read/Pwsh/MCP cards
+ *     keep their header line only with a persistent ▸; headers flatten
+ *     embedded newlines; Ctrl+O expands/collapses; MCP cards are named
+ *     `MCP › Server › Tool Words` with a dim › before the args.
  *
  * Run: node --import tsx/esm scripts/verify-star-transcript.tsx
  */
@@ -89,9 +93,30 @@ function screen(): string { return screenLines().join('\n') }
 //    into ANSI (inline code = permission, quote bar = subtle), so a markdown
 //    answer proves the star palette is live in the render, not just
 //    resolvable from getTheme().
+const readTool = {
+  callId: 'call-read', name: 'Read', argsText: '{"file_path":"src/app.ts"}', status: 'ok' as const,
+  startedAt: 0, durationMs: 40,
+  resultView: { card: 'read' as const, title: 'Read src/app.ts', path: 'src/app.ts', content: [{ type: 'text', text: 'READ-BODY-MARKER' }] },
+  resultText: 'READ-BODY-MARKER',
+}
+const pwshTool = {
+  callId: 'call-pwsh', name: 'Pwsh', argsText: '{"command":"npm test\nSECOND-CMD-LINE"}', status: 'ok' as const,
+  startedAt: 0, durationMs: 900,
+  resultView: { card: 'terminal' as const, title: 'npm test\nSECOND-CMD-LINE', output: 'PWSH-BODY-MARKER' },
+  resultText: 'PWSH-BODY-MARKER',
+}
+const mcpTool = {
+  callId: 'call-mcp', name: 'mcp__constellation__browser_run_code_unsafe', argsText: '{"function":"() => 1"}', status: 'ok' as const,
+  startedAt: 0, durationMs: 30,
+  resultView: { card: 'generic' as const, content: [{ type: 'text', text: 'MCP-BODY-MARKER' }] },
+  resultText: 'MCP-BODY-MARKER',
+}
 const rows: any[] = [
   Object.freeze({ id: 1, kind: 'user', text: 'STAR-QUESTION-MARKER' }),
   Object.freeze({ id: 2, kind: 'assistant', text: 'STAR-ANSWER-MARKER\n> star-quote-line\n`star-code-span`', streaming: false }),
+  Object.freeze({ id: 3, kind: 'tool', text: '', tool: Object.freeze(readTool) }),
+  Object.freeze({ id: 4, kind: 'tool', text: '', tool: Object.freeze(pwshTool) }),
+  Object.freeze({ id: 5, kind: 'tool', text: '', tool: Object.freeze(mcpTool) }),
 ]
 const listeners = new Set<() => void>()
 const channel: any = {
@@ -133,6 +158,25 @@ check('render: the answer keeps its quote line', screen().includes('star-quote-l
   check('render: star subtle color reaches the terminal (quote bar)', raw.includes(sgrOf(star.subtle)), sgrOf(star.subtle))
   check('render: star ink differs from stock dark ink', getTheme('dark').text !== star.text)
 }
+
+// 3b. DST-Star port (Comet one-line cards) + MCP display naming.
+check('one-line: Read body hidden', !screen().includes('READ-BODY-MARKER'))
+check('one-line: Pwsh body hidden', !screen().includes('PWSH-BODY-MARKER'))
+check('one-line: MCP body hidden', !screen().includes('MCP-BODY-MARKER'))
+check('one-line: Pwsh header flattens the command newline', (() => {
+  const line = screenLines().find(c => c.includes('npm test')) ?? ''
+  return line.includes('SECOND-CMD-LINE')
+})(), screenLines().find(c => c.includes('npm test')))
+check('one-line: persistent disclosure affordance (>=3 cards)', (screen().match(/▸/g) ?? []).length >= 3,
+  'arrows=' + String((screen().match(/▸/g) ?? []).length))
+check('mcp: card is named MCP › Constellation › Run Code', screen().includes('MCP › Constellation › Run Code'),
+  screenLines().find(c => c.includes('MCP')) ?? '')
+stdin.write('\x0f')
+await sleep(150)
+check('one-line: Ctrl+O reveals the Read body', await settled(() => screen().includes('READ-BODY-MARKER')))
+stdin.write('\x0f')
+await sleep(150)
+check('one-line: Ctrl+O hides the body again', await settled(() => !screen().includes('READ-BODY-MARKER')))
 
 // 4. Stats stay plain: wherever numbers render, they are digits with no
 //    gauge/sparkline glyphs on the same line (the family rail — plain
