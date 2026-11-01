@@ -5,6 +5,17 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-01 — Phase 4 verify + handoff docs (bootstrap complete):
+  full verification pass — typecheck/compile exit 0, star regression
+  19/19, upstream verify:build 95/103 with all 8 fails classified
+  against a PRISTINE upstream checkout (5 env: history-search,
+  terminal-images, session-mounts, runtime-themes, host-contract
+  symlink; 2 suite flakes passing standalone: rewind-edit,
+  initial-prompt; 1 documented fork-data-dir: theme-preview hardcodes
+  ~/.dsh-tui/themes); Docs/HANDOFF.md (day-one state + gotchas),
+  HOW_TO_RUN.md and ARCHITECTURE.md filled, README status → live,
+  PLAN_NOTES phases closed. Remaining user step: cloud-provider
+  onboarding.
 - 2026-11-01 — Phase 3 identity (star theme + rebrand + shortcut):
   starlightTheme (pink-night structure recolored to one starlight-blue
   family: accent #8FC1F2, ice shimmer #CFE8FF, navy cards/ink, steel

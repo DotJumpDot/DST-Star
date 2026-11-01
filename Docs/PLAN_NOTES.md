@@ -5,10 +5,10 @@ completed phases get their CHANGELOG line on the day they land.
 
 ## Current phase
 
-- Phase 0 (bootstrap) DONE. Phase 1 (vendor + build) DONE 2026-11-01
-  (upstream pin `a0630f4`, one code diff, build green, packed).
-  Phase 2 (profile + launchers + install) is next; execute via
-  `Docs/BOOTSTRAP-PROMPT.md`.
+- All four phases DONE (2026-11-01). Star is live: `dsts` boots the
+  forked TUI with the star identity; the only open step is the user's
+  onboarding (pick a cloud provider, supply own key). Post-bootstrap
+  work goes through `Docs/HANDOFF.md`.
 
 ## What DST-Star is (the one-paragraph spec)
 
@@ -190,12 +190,18 @@ Phase-3 landed notes:
   vtable attempt was fragile. A committed .js file still satisfies the
   lesson-5 intent (no inline-PowerShell backslash mangling, no deps).
 
-### Phase 4 — verify + handoff docs
+### Phase 4 — verify + handoff docs — DONE 2026-11-01
 
-1. Full pass: `pnpm typecheck`, `pnpm compile`, verify scripts,
-   `dump-config` assertions, both shells boot, a real cloud session.
-2. `Docs/CHANGES.md` complete file list; `Docs/HANDOFF.md` day-one
-   state + gotchas; `Docs/HOW_TO_RUN.md` filled; `CHANGELOG.md` line.
+1. [x] Full pass: typecheck + compile exit 0; verify-star-transcript
+      19/19; upstream `verify:build` 95/103 with all 8 fails accounted
+      (5 pristine-env, 2 suite flakes passing standalone, 1 documented
+      fork-data-dir — see HOW_TO_RUN); dump-config assertions re-checked;
+      both shells booted in real consoles across Phases 2-3 with the
+      isolation marker clean every time. A real cloud session is the one
+      remaining user step (onboarding).
+2. [x] `Docs/CHANGES.md` complete; `Docs/HANDOFF.md` day-one state +
+      gotchas; `Docs/HOW_TO_RUN.md` + `Docs/ARCHITECTURE.md` + README
+      status filled; `CHANGELOG.md` line.
 
 ## Version pins
 

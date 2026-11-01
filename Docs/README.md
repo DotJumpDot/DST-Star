@@ -10,6 +10,7 @@ lies is worse than no doc. Add new pages here when created.
 | [PLAN_NOTES.md](PLAN_NOTES.md) | Phase plan, version pins, deferred ideas |
 | [BOOTSTRAP-PROMPT.md](BOOTSTRAP-PROMPT.md) | One-paste handoff prompt that executes the plan |
 | [HANDOFF.md](HANDOFF.md) | Where we left off, gotchas, next steps |
+| [CHANGES.md](CHANGES.md) | Every modified file vs the upstream pin + install-time notes |
 
 House patterns used across our repos (add the ones this project needs):
 

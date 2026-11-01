@@ -30,17 +30,28 @@ except the dsh CLI itself.
 
 ## Status
 
-**Planning — bootstrap only.** The repo currently holds the contract
-(`AGENTS.md`), the family icon tile (`assets/dst-star.ico` — blue star
-with wide aura, regenerable via `scripts/gen-star-icon.py`), the full
-build plan ([`Docs/PLAN_NOTES.md`](Docs/PLAN_NOTES.md)) and the one-shot
-prompt that executes it ([`Docs/BOOTSTRAP-PROMPT.md`](Docs/BOOTSTRAP-PROMPT.md)).
-No vendor tree, no profile, no launcher yet — those are Phase 1+.
+**Live.** All four bootstrap phases are done (2026-11-01): the fork
+vendors the latest upstream dsh-TUI (`a0630f4` — see
+[`VENDORED.md`](VENDORED.md)) with a one-file data-dir diff plus a
+documented identity pass (starlight theme, DST/STAR splash); the
+`dst-star` profile, `dsts` launchers, PATH shims and the desktop
+shortcut are installed. Verified: typecheck/compile green, star
+regression 19/19, dump-config carries exactly the two bundles and the
+comfort settings, boots in Git Bash + PowerShell, sibling state dirs
+untouched. The only open item is onboarding (pick a cloud provider,
+supply your own key — see [`Docs/HANDOFF.md`](Docs/HANDOFF.md)).
+
+Run it: `dsts` (or `bin/dsts` / the desktop shortcut). Full instructions:
+[`Docs/HOW_TO_RUN.md`](Docs/HOW_TO_RUN.md).
 
 ## Docs index
 
 - [`AGENTS.md`](AGENTS.md) — working rules + commit & push style (read first)
 - [`Docs/PLAN_NOTES.md`](Docs/PLAN_NOTES.md) — the full phased build plan
 - [`Docs/BOOTSTRAP-PROMPT.md`](Docs/BOOTSTRAP-PROMPT.md) — one-prompt handoff for a fresh session
+- [`Docs/HOW_TO_RUN.md`](Docs/HOW_TO_RUN.md) — prereqs, setup, run, verify
+- [`Docs/HANDOFF.md`](Docs/HANDOFF.md) — day-one state, gotchas, next steps
+- [`Docs/CHANGES.md`](Docs/CHANGES.md) — every modified file vs the upstream pin
+- [`VENDORED.md`](VENDORED.md) — upstream pins + re-vendoring recipe
 - [`Docs/README.md`](Docs/README.md) — documentation index
 - [`CHANGELOG.md`](CHANGELOG.md) — newest-first work log
