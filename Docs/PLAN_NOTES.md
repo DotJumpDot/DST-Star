@@ -5,8 +5,10 @@ completed phases get their CHANGELOG line on the day they land.
 
 ## Current phase
 
-- Phase 0 (bootstrap) is DONE — repo, git, icon, plan, prompt.
-  Phase 1 (vendor + build) is next; execute via `Docs/BOOTSTRAP-PROMPT.md`.
+- Phase 0 (bootstrap) DONE. Phase 1 (vendor + build) DONE 2026-11-01
+  (upstream pin `a0630f4`, one code diff, build green, packed).
+  Phase 2 (profile + launchers + install) is next; execute via
+  `Docs/BOOTSTRAP-PROMPT.md`.
 
 ## What DST-Star is (the one-paragraph spec)
 
@@ -67,32 +69,32 @@ session root `~/.dst-star/sessions`, launcher `dsts`.
 - [x] git init, first house-style commit, push to
       `https://github.com/DotJumpDot/DST-Star` (`main`).
 
-### Phase 1 — vendor + build (the fork comes to life)
+### Phase 1 — vendor + build (the fork comes to life) — DONE 2026-11-01
 
-1. `scripts/setup-vendor.sh` (adapt from DST-Moon's, path
-   `C:\Code\DST-Moon\scripts\setup-vendor.sh`): clone deepseek-harness at
-   the latest tag/main into `vendor/deepseek-harness/` (untracked
-   reference); record the commit hash in `VENDORED.md`.
-2. Copy `packages/tui` (or the dsh-tui package root — check
-   `VENDORED.md` in DST-Moon for the exact path convention) to
-   `vendor/dsh-tui/`. Copy Moon's `.gitignore` additions
-   (`vendor/deepseek-harness/`, `*.tsbuildinfo`,
-   `!vendor/dsh-tui/scripts/lib/`) and `.gitattributes` (LF for `*.sh`
-   and `bin/dsts`, CRLF for `*.bat`/`*.cmd`) — the scripts/lib negation
-   is a Comet-discovered gap: tracked verify scripts import it.
-3. Install: `npx -y pnpm@11.21.0 install --config.nodeLinker=hoisted`
-   — **NEVER `npm install`** (workspace:* protocol; this is fork lesson
-   #1). Then `pnpm run typecheck` + `pnpm run compile` against the
-   untouched tree to prove the baseline builds before any diff.
-4. The one code diff: `vendor/dsh-tui/src/utils/paths.ts`
-   `DATA_DIR = resolveDataDir()` with `DSH_TUI_DATA_DIR` (tests) →
-   `DSH_TUI_STATE_DIR` (launcher pin) → `join(homeDir(), '.dst-star')`.
-   Copy the exact shape from DST-Moon's file (it carries the comments).
-5. Rebuild; `pnpm pack` (tarball lands in the package ROOT — move it to
-   `dist/dst-star.tgz`; fork lesson #2).
+- [x] `scripts/setup-vendor.sh`: clones upstream dsh-TUI `a0630f4`
+      (LATEST main 2026-11-01, family pin was `2957277`) into the tracked
+      `vendor/dsh-tui/`, its dsh-std submodule `614dfa1` (empty dir in a
+      bare clone — the pin lives in the parent tree, read it with
+      `git ls-tree`), and the untracked `vendor/deepseek-harness/`
+      reference `ce7073d`. Pins recorded in `VENDORED.md`.
+- [x] `.gitignore` / `.gitattributes` carried from Phase 0 (already had
+      the `vendor/deepseek-harness/` ignore + `!vendor/dsh-tui/scripts/lib/`
+      negation + LF/CRLF rules) — verified working on the real tree.
+- [x] Install `npx -y pnpm@11.21.0 install --config.nodeLinker=hoisted`
+      (1m; prepare generated 77 settings, backend index claude+codex);
+      baseline `pnpm run typecheck` + `pnpm run compile` both exit 0 on
+      the UNTOUCHED tree before any diff.
+- [x] The one code diff: `src/utils/paths.ts` — upstream at the new pin
+      ships a plain `DATA_DIR = join(homeDir(), '.dsh-tui')` constant
+      (no resolveDataDir); reintroduced the family fork shape
+      (`DSH_TUI_DATA_DIR` → `DSH_TUI_STATE_DIR` → `~/.dst-star`), kept
+      the new `expandHomePrefix` untouched. Verified the compiled
+      `lib/types/utils/paths.js` carries the fork resolution.
+- [x] Rebuilt green (typecheck 0, compile 0); `pnpm pack` → moved from
+      package root to `dist/dst-star.tgz` (18.8 MB, fork lesson #2).
 
 **Acceptance:** typecheck + compile green on the forked tree with only
-paths.ts changed; `Docs/CHANGES.md` opened with that one row.
+paths.ts changed; `Docs/CHANGES.md` opened with that one row. ✔
 
 ### Phase 2 — profile + launchers + install
 

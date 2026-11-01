@@ -5,6 +5,15 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-01 — Phase 1 vendor + build (the fork comes to life): vendored
+  LATEST upstream dsh-TUI `a0630f4` (2026-11-01; family pin was 2957277)
+  with its dsh-std submodule `614dfa1` + deepseek-harness reference
+  `ce7073d` via scripts/setup-vendor.sh; pins recorded in VENDORED.md;
+  baseline typecheck+compile green on the untouched tree; the ONE code
+  diff applied — vendor/dsh-tui/src/utils/paths.ts DATA_DIR resolves
+  DSH_TUI_DATA_DIR → DSH_TUI_STATE_DIR → ~/.dst-star (Moon's pattern);
+  rebuilt green, packed to dist/dst-star.tgz (18.8 MB); Docs/CHANGES.md
+  opened.
 - 2026-11-01 — Phase 0 bootstrap (planning only, no fork work): AGENTS.md
   filled for Star's identity (minimal-drift fork, no MCP/no agent-teams/no
   engine tarballs, three-way state isolation, no Comet credentials);
