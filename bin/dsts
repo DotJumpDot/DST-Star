@@ -1,0 +1,43 @@
+#!/bin/sh
+# dsts — DST Star launcher (bash). Mirrors bin/dsts.cmd.
+# Boots dsh with the dst-star profile: OUR minimal fork of the LATEST
+# upstream dsh-tui (see VENDORED.md) — the clean daily driver. Cloud
+# providers come from the built-in catalog; credentials are the user's
+# own (normal dsh onboarding flow, kept enabled).
+#   --resume: feed the session id recorded by the TUI to DSH_TUI_RESUME_SESSION
+# DST-Star keeps its own state (~/.dst-star) so it never shares settings,
+# history or session logs with a sibling fork (DST-Comet ~/.dsh-tui-comet,
+# DST-Moon ~/.dst-moon).
+set -e
+: "${NODE_ENV:=production}"
+export NODE_ENV
+# Session logs live under our own data dir unless the caller overrides.
+: "${DSH_TUI_SESSION_ROOT:=$HOME/.dst-star/sessions}"
+export DSH_TUI_SESSION_ROOT
+# Fork-isolation pin (same convention as the comet/moon forks' launchers):
+# the TUI also reads DSH_TUI_STATE_DIR, so even if a rebase restores the
+# upstream ~/.dsh-tui default the state dir stays Star-owned.
+: "${DSH_TUI_STATE_DIR:=$HOME/.dst-star}"
+export DSH_TUI_STATE_DIR
+if [ -n "$DSH_TUI_WORKSPACE" ]; then cd "$DSH_TUI_WORKSPACE"; fi
+
+command -v dsh >/dev/null 2>&1 || {
+  echo "[dsts] dsh CLI not found. Install: npm install -g @deepseek-ai/dsh" >&2
+  exit 1
+}
+
+# Rebuild the positional set without --resume (the for list snapshots "$@"
+# before `set --` starts replacing it).
+set --
+for a in "$@"; do
+  if [ "$a" = "--resume" ]; then
+    if [ -f "$HOME/.dst-star/resume.txt" ]; then
+      DSH_TUI_RESUME_SESSION=$(cat "$HOME/.dst-star/resume.txt")
+      export DSH_TUI_RESUME_SESSION
+    fi
+  else
+    set -- "$@" "$a"
+  fi
+done
+
+exec dsh --profile dst-star "$@"

@@ -96,7 +96,7 @@ session root `~/.dst-star/sessions`, launcher `dsts`.
 **Acceptance:** typecheck + compile green on the forked tree with only
 paths.ts changed; `Docs/CHANGES.md` opened with that one row. ✔
 
-### Phase 2 — profile + launchers + install
+### Phase 2 — profile + launchers + install — DONE 2026-11-01
 
 1. `profile/cordis.patch.yml`, hand-written from scratch. Rows:
    - `dsh-tui` (name `@deepseek-harness-tui/dsh-tui`): NO `provider`/
@@ -132,7 +132,25 @@ paths.ts changed; `Docs/CHANGES.md` opened with that one row. ✔
 **Acceptance:** `dsts` boots the stock-looking TUI (post-onboarding) in
 both Git Bash and Windows Terminal; `~/.dst-star/` exists and
 `~/.dsh-tui`, `~/.dsh-tui-comet`, `~/.dst-moon` are untouched by a Star
-boot.
+boot. ✔ (2026-11-01 — both launchers booted in real console windows;
+`~/.dst-star/settings.json` carries every comfort key incl.
+`sidePanel.open: true`; 0 sibling files newer than the pre-boot markers;
+the onboarding wizard is the first screen, waiting on the user's provider
+choice.)
+
+Phase-2 landed notes:
+- `oneLineToolCards` DROPPED from the comfort set — the key no longer
+  exists at the a0630f4 pin (upstream removed it; no rename found).
+- `sidePanel.open: true` IS a config key at this pin — no code default
+  needed.
+- The install needed TWO exact-version exemptions (the anticipated one
+  became two): the rc.5-line TUI bundle ships first-party plugins
+  `@deepseek-ai/dsh-code-runtime-worker-thread@0.1.0-rc.6` and
+  `@deepseek-ai/dsh-agent-presets@0.1.0-rc.6` whose requirement ranges
+  read `^0.1.0-rc.6` against the installed dsh host `0.2.1-rc.2` — the
+  same pairing Moon runs. `scripts/install-fork.bat` grants both before
+  `dsh plugin add`. They are bundle internals riding the TUI tarball,
+  NOT added plugins — the bundle list stays exactly the two Star rows.
 
 ### Phase 3 — identity (recommended, keeps Star findable at a glance)
 

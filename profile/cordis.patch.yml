@@ -1,0 +1,35 @@
+# DST-Star profile patch — the CLEAN DAILY DRIVER.
+#
+# Installed to %USERPROFILE%\.dsh\profiles\dst-star\cordis.patch.yml by
+# scripts\install-fork.bat (this file is the source of truth; edit here,
+# re-run the installer or copy it over). Completely separate from the
+# sibling forks: own TUI fork tarball (dist/dst-star.tgz), own data dir
+# (~/.dst-star), own session root. NO MCP servers and NO Agent-Teams /
+# orchestra plugins ride this profile — that machinery belongs to
+# DST-Comet. No credentials here either: the onboarding wizard stays
+# ENABLED, the user picks a cloud provider and pastes their own key via
+# the normal dsh flow. Sandbox/approval rows are deliberately absent —
+# Star inherits the stock dsh-tui bundle defaults (Moon is the strict one).
+#
+# The bundle list itself lives in the profile's package.json
+# (dsh.profile.bundles) and is pinned by scripts\install-fork.bat to
+# exactly ["@deepseek-ai/dsh-base", "@deepseek-harness-tui/dsh-tui"].
+
+- id: dsh-tui
+  name: "@deepseek-harness-tui/dsh-tui"
+  config:
+    # NO provider / model pin: the onboarding wizard and the built-in
+    # catalog decide; the user logs in with their own cloud credentials.
+    # Comfort settings carried over from the Comet fork's defaults —
+    # every key verified against the a0630f4 settings schema. (Comet's
+    # oneLineToolCards was dropped: the key no longer exists upstream.)
+    lang: en
+    fullscreen: true
+    terminalImages: true
+    pageMargin: normal
+    toolBackground: none
+    foldTerminalCommand: true
+    whaleIdle: true
+    whaleGirl: true
+    companion: { skin: whale }
+    sidePanel: { open: true }

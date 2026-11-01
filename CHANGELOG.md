@@ -5,6 +5,20 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-01 — Phase 2 profile + launchers + install (dsts boots):
+  profile/cordis.patch.yml hand-written (no provider pin, onboarding
+  enabled; comfort keys lang/fullscreen/terminalImages/pageMargin/
+  toolBackground/foldTerminalCommand/whaleIdle/whaleGirl/
+  companion.skin/sidePanel.open verified against the a0630f4 schema;
+  oneLineToolCards dropped — removed upstream); bin/dsts + bin/dsts.cmd
+  launchers (DSH_TUI_STATE_DIR + DSH_TUI_SESSION_ROOT pins, --resume);
+  scripts/install-fork.bat (pack guard, dsh plugin add with the two
+  documented rc.6 exact-version exemptions, patch copy, bundle list
+  pinned to exactly dsh-base + dsh-tui); PATH shims copied to
+  %APPDATA%\npm. Verified: dump-config shows only the two bundles' rows
+  + settings block, 0 added MCP / 0 agent-team rows; dsts booted in real
+  consoles via both launchers; ~/.dst-star created and populated; 0
+  files newer than pre-boot markers in ~/.dsh-tui and ~/.dst-moon.
 - 2026-11-01 — Phase 1 vendor + build (the fork comes to life): vendored
   LATEST upstream dsh-TUI `a0630f4` (2026-11-01; family pin was 2957277)
   with its dsh-std submodule `614dfa1` + deepseek-harness reference
