@@ -5,7 +5,7 @@
  * via the controller) with fake chat content in a headless XTerm
  * (AlternateScreen — fixed-height boxes are only trustworthy there, see
  * verify-divider-width's lesson) and locks the visual contract:
- *  - divider column sits exactly at the chat width; rows 1 and rows-2
+ *  - divider column sits exactly at the chat width; the bar's rule row and rows-2
  *    draw '├' (teeing into the panel rules), every other row '│';
  *  - PanelBar keeps its title centered, spaces panel icons and arrows on one row;
  *  - the chat-side bordered input never crosses the divider;
@@ -23,7 +23,7 @@ process.env.FORCE_COLOR = '3'
 // switches at runtime via setLang (i18n hot-swaps).
 process.env.DSH_TUI_LANG = 'zh'
 
-const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLayout }, { SidePanelColumn }, { useSidePanel }, dims, prefs, { setLang }, termTest] = await Promise.all([
+const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLayout }, { SidePanelColumn }, { useSidePanel }, dims, prefs, { setLang }, termTest, { sidebarBrandRows, SIDEBAR_BRAND_GAP }] = await Promise.all([
   import('node:stream'),
   import('react'),
   import('@xterm/headless'),
@@ -35,6 +35,7 @@ const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLay
   import('../src/tuiDisplayPrefs.js'),
   import('../src/i18n.js'),
   import('./lib/term-test.mjs'),
+  import('../src/components/sidePanel/sidebarBrand.js'),
 ])
 const { render, ThemeProvider, Box, Text, AlternateScreen, useTerminalSize } = ui
 const { resolveSplit, resolveZoom, resolveSidePanelGeometry } = dims
@@ -43,6 +44,11 @@ const { settled, sleep } = termTest
 setLang('zh')
 
 const ROWS = 18
+
+// DST-Star fork: the brand header (DST·Star wordmark + meta, 2 rows + 1 gap at
+// this fixture's height) rides above the panel bar; every row-indexed
+// assertion below offsets by it. The tee row is the bar's rule.
+const BRAND_ROWS = sidebarBrandRows(ROWS, 0)
 
 // Minimal channel stub: the todo builtin reads goal/todos/working (all
 // empty -> renders nothing); nothing else in the column touches it.
@@ -169,15 +175,18 @@ function assertSplitFrame(name: string, frame: Frame, geo: { chat: number; panel
   const chatCol = geo.chat
   // Divider column: tee at rule rows, seam elsewhere.
   for (let y = 0; y < ROWS; y += 1) {
-    const expected = (y === 1 || y === ROWS - 2) ? '├' : '│'
+    const expected = (y === BRAND_ROWS + 1 || y === ROWS - 2) ? '├' : '│'
     const got = cells(lines[y])[chatCol]
     check(name + ': divider row ' + y + ' is ' + expected, got === expected, 'got ' + JSON.stringify(got) + ' line=' + JSON.stringify(lines[y]))
   }
-  check(name + ': row 0 carries the active title', lines[0].includes('待办'), JSON.stringify(lines[0]))
-  check(name + ': row 0 shows the inactive panel icons', lines[0].includes('▸') && lines[0].includes('◆'), JSON.stringify(lines[0]))
-  // Rules frame the host: row 1 and rows-2 are horizontal rules on the panel side.
-  const ruleAfter = cells(lines[1]).slice(chatCol + 1).join('').trim()
-  check(name + ': row 1 rule right of the divider', ruleAfter.length > 0 && ruleAfter.startsWith('─'), ruleAfter.slice(0, 8))
+  // Brand header: the DST·Star wordmark occupies the rows above the bar.
+  check(name + ': brand header carries DST·Star', lines.slice(0, BRAND_ROWS).some(line => line.includes('DST·Star')),
+    JSON.stringify(lines.slice(0, BRAND_ROWS)))
+  check(name + ': row ' + BRAND_ROWS + ' carries the active title', lines[BRAND_ROWS].includes('待办'), JSON.stringify(lines[BRAND_ROWS]))
+  check(name + ': row ' + BRAND_ROWS + ' shows the inactive panel icons', lines[BRAND_ROWS].includes('▸') && lines[BRAND_ROWS].includes('◆'), JSON.stringify(lines[BRAND_ROWS]))
+  // Rules frame the host: the bar's rule and rows-2 are horizontal rules on the panel side.
+  const ruleAfter = cells(lines[BRAND_ROWS + 1]).slice(chatCol + 1).join('').trim()
+  check(name + ': bar rule right of the divider', ruleAfter.length > 0 && ruleAfter.startsWith('─'), ruleAfter.slice(0, 8))
   const ruleBefore = cells(lines[ROWS - 2]).slice(chatCol + 1).join('').trim()
   check(name + ': rows-2 rule right of the divider', ruleBefore.length > 0 && ruleBefore.startsWith('─'), ruleBefore.slice(0, 8))
   // Hint on the last row, swapping with focus.
@@ -198,6 +207,12 @@ function assertSplitFrame(name: string, frame: Frame, geo: { chat: number; panel
   }
 }
 
+// --- 0. brand header height ladder (pure function) -----------------------
+check('brand: a 22-row terminal keeps the compact text header', sidebarBrandRows(22) === 3)
+check('brand: a 39-col panel stays text-only', sidebarBrandRows(40, 39) === 3)
+check('brand: a 46-col panel on a 40-row terminal uses the 8-row mascot header + gap', sidebarBrandRows(40, 46) === 9)
+check('brand: the gap row is part of the total', sidebarBrandRows(40, 46) === 8 + SIDEBAR_BRAND_GAP)
+
 // --- 1. 120 columns, focus=chat -----------------------------------------
 {
   const frame = await mountSplit(120, false)
@@ -216,7 +231,7 @@ function assertSplitFrame(name: string, frame: Frame, geo: { chat: number; panel
 {
   const frame = await mountSplit(120, true, true)
   assertSplitFrame('zoom(120)/chat=64', frame, resolveZoom(120), 'Esc 聊天', 'Ctrl+B 聚焦侧栏')
-  check('zoom(120)/chat=64: divider sits at column 64', cells(frame.lines()[5])[64] === '│', JSON.stringify(frame.lines()[5]))
+  check('zoom(120)/chat=64: divider sits at column 64', cells(frame.lines()[BRAND_ROWS + 5])[64] === '│', JSON.stringify(frame.lines()[BRAND_ROWS + 5]))
   await frame.app.unmount()
 }
 
@@ -227,7 +242,7 @@ function assertSplitFrame(name: string, frame: Frame, geo: { chat: number; panel
   const frame = await mountSplit(93, true)
   const lines = frame.lines()
   assertSplitFrame('93/focus=panel', frame, geo, 'Esc 聊天', 'Ctrl+B 聚焦侧栏')
-  check('93: carousel arrows and title occupy row 0 without overflow', lines[0]?.includes('◀') && lines[0]?.includes('▶') && !/\+\d+/.test(lines[0]!), JSON.stringify(lines[0]))
+  check('93: carousel arrows and title occupy the bar row without overflow', lines[BRAND_ROWS]?.includes('◀') && lines[BRAND_ROWS]?.includes('▶') && !/\+\d+/.test(lines[BRAND_ROWS]!), JSON.stringify(lines[BRAND_ROWS]))
   // Hint is exactly one row: rows-2 is the rule, and no hint text above it.
   check('93: hint is exactly one row (rows-2 is the rule)', !lines[ROWS - 2].includes('Esc') && lines[ROWS - 1].includes('Esc'), JSON.stringify(lines[ROWS - 2]))
   await frame.app.unmount()
@@ -291,7 +306,7 @@ function assertSplitFrame(name: string, frame: Frame, geo: { chat: number; panel
   await sleep(120) // 固定窗:墙钟 resize 触发的是节流重排，渲染节流窗口本身就是被等语义
   const shrunkGeo = resolveSidePanelGeometry({ columns: 100, open: true, zoom: false, ratio: 0.68 })
   if (shrunkGeo === null) throw new Error('100 columns must split')
-  const shrunkLine = (frame.lines()[5] ?? '').slice(0, 100)
+  const shrunkLine = (frame.lines()[BRAND_ROWS + 5] ?? '').slice(0, 100)
   check('resize: 100-col frame re-splits to chat=68/panel=31', [...shrunkLine][shrunkGeo.chat] === '│', JSON.stringify(shrunkLine))
   frame.stdout.columns = 120
   frame.term.resize(120, ROWS)

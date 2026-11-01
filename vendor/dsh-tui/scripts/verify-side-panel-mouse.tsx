@@ -18,7 +18,7 @@ export {}
 process.env.FORCE_COLOR = '3'
 process.env.DSH_TUI_LANG = 'en'
 
-const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLayout }, { SidePanelColumn }, { useSidePanel }, prefs, { TooltipLayer }, termTest] = await Promise.all([
+const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLayout }, { SidePanelColumn }, { useSidePanel }, prefs, { TooltipLayer }, termTest, { sidebarBrandRows }] = await Promise.all([
   import('node:stream'),
   import('react'),
   import('@xterm/headless'),
@@ -29,6 +29,7 @@ const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLay
   import('../src/tuiDisplayPrefs.js'),
   import('../src/components/Tooltip.js'),
   import('./lib/term-test.mjs'),
+  import('../src/components/sidePanel/sidebarBrand.js'),
 ])
 const { render, AlternateScreen, Box, Text, useInput } = ui
 const { applySidePanelOpen, applySidePanelPanels, applySidePanelRatio } = prefs
@@ -168,7 +169,9 @@ const app = await render(
 
 try {
   check('a boot: active title is centered on Todo', await settled(() => has('Todo'), { timeoutMs: 4000 }))
-  check('a boot: inactive panels show their own icons', (lines()[0]?.match(/[▸◆]/g) ?? []).length === 2, lines()[0]?.trim())
+  // DST-Star fork: the brand header rides above the bar; find the bar by its arrows.
+  const barAt = (view: string[]): string => view.find(line => line.includes('◀')) ?? ''
+  check('a boot: inactive panels show their own icons', (barAt(lines()).match(/[▸◆]/g) ?? []).length === 2, barAt(lines()).trim())
   check('a boot: no ⤢ for a panel without a fullscreen form', !has('⤢'))
 
   const agentsIcon = findText('◆')
@@ -235,10 +238,11 @@ try {
   )
   try {
     await settled(() => lines2().some(line => line.includes('Jobs')), { timeoutMs: 4000 })
-    const barRow = lines2()[0] ?? ''
+    // DST-Star fork: compact brand header (2 rows + gap) sits above the bar.
+    const barRow = lines2()[sidebarBrandRows(NROWS, 0)] ?? ''
     check('f narrow: eight-panel bar keeps every icon and both arrows', (barRow.match(/[≡ⓘ∿?◆⌗♥]/g) ?? []).length === 7 && barRow.includes('◀') && barRow.includes('▶'), barRow.trim())
     check('f narrow: ⤢ stays on the same row', barRow.includes('⤢'), barRow.trim())
-    check('f fold: the bar is exactly one row (row 1 is the rule)', (lines2()[1] ?? '').includes('─'), (lines2()[1] ?? '').trim())
+    check('f fold: the bar is exactly one row (a rule follows it)', (lines2()[sidebarBrandRows(NROWS, 0) + 1] ?? '').includes('─'), (lines2()[sidebarBrandRows(NROWS, 0) + 1] ?? '').trim())
   } finally {
     await app2.unmount()
   }

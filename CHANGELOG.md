@@ -5,6 +5,17 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-01 — Day-one fix: Comet-style sidebar brand header ported. The
+  Phase-3 plan's `DST·Star` wordmark had been skipped (upstream at the
+  new pin has no BrandHeader); ported from Moon: sidebarBrand.ts (mascot
+  click-cycle store, persists to ~/.dst-star/sidebar-logo.json) +
+  SidebarMascot.tsx (22-col half-block sprite) + SidePanelColumn
+  BrandHeader (mascot + DST·Star vX + model·effort above the panel bar)
+  + SidePanelLayout tee row; Whale.tsx exports WHALE_PALETTE; 8
+  side-panel verify scripts made brand-aware (row offsets / arrow-anchored
+  bar lookups / wheel aimed at live list rows); top placement only (no
+  sidebarLogoPosition setting chain). Fork repacked + reinstalled; boot
+  re-verified (siblings 0 writes).
 - 2026-11-01 — Phase 4 verify + handoff docs (bootstrap complete):
   full verification pass — typecheck/compile exit 0, star regression
   19/19, upstream verify:build 95/103 with all 8 fails classified

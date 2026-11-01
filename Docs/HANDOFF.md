@@ -39,7 +39,9 @@ live API keys.
    `oneLineToolCards` is gone (dropped from the comfort set),
    the deepseek tagline routes through i18n `logo-tagline` (not
    BRAND_TAGLINE), and Moon's sidebar BrandHeader wordmark doesn't exist
-   upstream — Star's wordmark surface is the splash words + tagline.
+   upstream — Star ports it (sidebarBrand.ts + SidebarMascot.tsx +
+   SidePanelColumn/Layout; top placement only, no `sidebarLogoPosition`
+   setting chain).
 2. **dsh-std is a SUBMODULE upstream now.** A bare clone leaves
    `vendor/dsh-tui/vendor/dsh-std` empty; `scripts/setup-vendor.sh`
    checks it out at the pin (read the pin with `git ls-tree HEAD

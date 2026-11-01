@@ -46,7 +46,7 @@ const { applySidePanelOpen, applySidePanelRatio } = prefs
 const { settled } = termTest
 
 const COLS = 120
-const ROWS = 22
+const ROWS = 25 // +3: the DST-Star brand header (compact 2 rows + gap) feeds on the host rows the assertions count on
 
 let failed = 0
 function check(name: string, ok: boolean, extra = ''): void {

@@ -47,7 +47,7 @@ const [{ renderToScreen }, { cellAt }, { TerminalSizeContext }, { SidePanelLayou
 ])
 
 const COLS = 110
-const ROWS = 22
+const ROWS = 25 // +3: the DST-Star brand header (compact 2 rows + gap) feeds on the host rows the assertions count on
 
 let failed = 0
 function check(name: string, ok: boolean, extra = ''): void {
@@ -484,14 +484,22 @@ try {
     JSON.stringify(contLine ?? null))
   // 滚动形态：全部 todo 进入行模型，不再有 `…N more` 预算隐藏；视口外的
   // 条目滚一下就能看到（19 行 > 17 行视口）。
-  const scrollWheel = (button: number) => '\x1b[<' + button + ';' + (exposedChatColumns + 4) + ';5M'
+  // DST-Star fork: the brand header pushes the host down 3 rows, so a
+  // hardcoded wheel row can land on the goal/fold chrome instead of the
+  // scrollable list - resolve the row from a live list item each time
+  // (SGR is 1-indexed; the fallback aims mid-host, which is list rows once
+  // scrolling has started).
+  const wheelAt = (button: number, needle: string): void => {
+    const row = lines().findIndex(l => l.includes(needle))
+    stdin.write('\x1b[<' + button + ';' + (exposedChatColumns + 4) + ';' + (row >= 0 ? row + 1 : 15) + 'M')
+  }
   check('wrap: the panel renders every todo (no …N more lane)',
     !lines().some(l => l.includes(' more')) && lines().some(l => l.includes('short task 0')),
     lines().find(l => l.includes('more')) ?? 'no-more-line')
-  for (let i = 0; i < 6; i += 1) { stdin.write(scrollWheel(65)); await sleep(4) } // 固定窗:pacing 逐格滚轮
+  for (let i = 0; i < 6; i += 1) { wheelAt(65, 'short task 2'); await sleep(4) } // 固定窗:pacing 逐格滚轮
   check('wrap: scrolling reaches the last todo in the list',
     await settled(() => lines().some(l => l.includes('short task 11')), { timeout: 4000 }))
-  for (let i = 0; i < 6; i += 1) { stdin.write(scrollWheel(64)); await sleep(4) } // 固定窗:pacing 逐格滚轮
+  for (let i = 0; i < 6; i += 1) { wheelAt(64, 'short task 2'); await sleep(4) } // 固定窗:pacing 逐格滚轮
   await settled(() => lines().some(l => l.includes('short task 0')))
   // 高度契约（§16.6）：折行只改变可见条数，面板盒子高度（分隔线位置）不变。
   check('wrap: panel height unchanged (rule rows identical)', JSON.stringify(ruleRows()) === JSON.stringify(rulesBefore),
@@ -582,10 +590,10 @@ try {
   await settled(() => lines().some(l => l.includes('budget task 0')), { timeout: 4000 })
   check('goal-budget: all todos are rendered (no …N more) and the list scrolls',
     lines().some(l => l.includes('budget task 0')) && !lines().some(l => l.includes(' more')))
-  for (let i = 0; i < 25; i += 1) { stdin.write(scrollWheel(65)); await sleep(4) } // 固定窗:pacing 逐格滚轮
+  for (let i = 0; i < 25; i += 1) { wheelAt(65, 'budget task 2'); await sleep(4) } // 固定窗:pacing 逐格滚轮
   check('goal-budget: the last todo is reachable by scrolling',
     await settled(() => lines().some(l => l.includes('budget task 19')), { timeout: 4000 }))
-  for (let i = 0; i < 25; i += 1) { stdin.write(scrollWheel(64)); await sleep(4) } // 固定窗:pacing 逐格滚轮
+  for (let i = 0; i < 25; i += 1) { wheelAt(64, 'budget task 2'); await sleep(4) } // 固定窗:pacing 逐格滚轮
   await settled(() => lines().some(l => l.includes('budget task 0')), { timeout: 4000 })
 
   // --- 7. long goal: scroll by keys / wheel; reset on goal switch ----------
@@ -607,7 +615,12 @@ try {
 
   // 滚轮：鼠标位于面板内容上，一格滚轮 = 一行。第一行滚出即证明位移。
   const wheelCol = exposedChatColumns + 3
-  const wheelSeq = (button: number) => '\x1b[<' + button + ';' + (wheelCol + 1) + ';5M'
+  // DST-Star fork: aim the wheel at the goal head's own row (the brand
+  // header shifted the host down, so the old hardcoded row is chrome now).
+  const wheelSeq = (button: number) => {
+    const row = lines().findIndex(l => l.includes(GOAL_HEAD))
+    return '\x1b[<' + button + ';' + (wheelCol + 1) + ';' + (row >= 0 ? row + 1 : 15) + 'M'
+  }
   stdin.write(wheelSeq(65))
   check('goal-wheel: wheel down scrolls one row (head leaves the viewport)',
     await settled(() => !lines().some(l => l.includes(GOAL_HEAD)), { timeout: 4000 }))

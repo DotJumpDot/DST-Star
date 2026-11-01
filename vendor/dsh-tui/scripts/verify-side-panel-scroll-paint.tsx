@@ -44,7 +44,7 @@ process.env.DSH_TUI_LANG = 'en'
   setMinimalUiMode(true)
 }
 
-const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLayout }, { SidePanelColumn }, { useSidePanel }, prefs, termTest] = await Promise.all([
+const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLayout }, { SidePanelColumn }, { useSidePanel }, prefs, termTest, { sidebarBrandRows }] = await Promise.all([
   import('node:stream'),
   import('react'),
   import('@xterm/headless'),
@@ -54,6 +54,7 @@ const [{ PassThrough, Writable }, React, { Terminal: XTerm }, ui, { SidePanelLay
   import('../src/components/sidePanel/useSidePanel.js'),
   import('../src/tuiDisplayPrefs.js'),
   import('./lib/term-test.mjs'),
+  import('../src/components/sidePanel/sidebarBrand.js'),
 ])
 const { render, ThemeProvider, AlternateScreen, Box, Text, useInput, ScrollBox } = ui
 const { applySidePanelOpen, applySidePanelRatio, applySidePanelPanels } = prefs
@@ -197,7 +198,9 @@ function dividerReport(): string {
   const bad: string[] = []
   const lines = rawLines()
   for (let y = 0; y < ROWS; y += 1) {
-    const want = y === 1 || y === ROWS - 2 ? '├' : '│'
+    // DST-Star fork: the brand header pushes the panel bar's rule down;
+    // the seam tees there and at rows-2.
+    const want = y === sidebarBrandRows(ROWS, exposedChatColumns === undefined ? 0 : COLS - exposedChatColumns - 1) + 1 || y === ROWS - 2 ? '├' : '│'
     const got = lines[y]![col] ?? ' '
     if (got !== want) bad.push(y + ':' + JSON.stringify(got) + '!=' + want)
   }

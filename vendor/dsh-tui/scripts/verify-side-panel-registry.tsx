@@ -44,7 +44,7 @@ const COLS = 120
 // asserts on rows in the LAST section, and a shorter column would push them
 // out of the viewport (the panel's own scroll behavior is covered by
 // verify-info-panel with its own scroll assertions).
-const ROWS = 34
+const ROWS = 37 // +3: the DST-Star brand header (compact 2 rows + gap) feeds on the host rows the assertions count on
 
 let failed = 0
 function check(name: string, ok: boolean, extra = ''): void {
@@ -149,6 +149,13 @@ const click = (c: number, r: number) => {
   stdin.write('\x1b[<0;' + (c + 1) + ';' + (r + 1) + 'M')
   stdin.write('\x1b[<0;' + (c + 1) + ';' + (r + 1) + 'm')
 }
+// DST-Star fork: the brand header (DST·Star wordmark + mascot) rides above
+// the panel bar, so the bar is found by its nav arrows, not by row index.
+const barLine = (): { line: string; row: number } => {
+  const view = viewportLines(term, ROWS)
+  const row = view.findIndex(line => line.includes('◀'))
+  return { line: row >= 0 ? view[row]! : '', row: Math.max(0, row) }
+}
 
 applySidePanelRatio(0.68)
 applySidePanelPanels('todo,info,trajectory')
@@ -169,7 +176,7 @@ const app = await render(
 
 try {
   check('c mount: todo is the active carousel title', await settled(() => has('Todo'), { timeoutMs: 4000 }))
-  check('c mount: inactive panels show their registered icons', (viewportLines(term, ROWS)[0]?.match(/[ⓘ∿]/g) ?? []).length === 2)
+  check('c mount: inactive panels show their registered icons', (barLine().line.match(/[ⓘ∿]/g) ?? []).length === 2)
   check('c mount: no ⤢ while a fullscreen-less panel is active', !has('⤢'))
 
   const infoArrow = findText('▶')
@@ -181,9 +188,9 @@ try {
   check('c info: working dir row rendered', has(t('info-row-cwd')))
   check('c info: still no ⤢ (no fullscreen form)', !has('⤢'))
 
-  const row = viewportLines(term, ROWS)[0] ?? ''
-  const trajectoryIcon = { col: row.indexOf('∿', row.indexOf('Info') + 'Info'.length), row: 0 }
-  check('c trajectory: the next panel icon is visible', trajectoryIcon.col > 0, row)
+  const bar = barLine()
+  const trajectoryIcon = { col: bar.line.indexOf('∿', bar.line.indexOf('Info') + 'Info'.length), row: bar.row }
+  check('c trajectory: the next panel icon is visible', trajectoryIcon.col > 0, bar.line)
   if (trajectoryIcon.col > 0) click(trajectoryIcon.col + 1, trajectoryIcon.row)
   check('c trajectory: clicking its icon selects the panel title', await settled(() => has('Trajectory') && !has('Info'), { timeoutMs: 4000 }), viewportLines(term, ROWS).slice(0, 5).join('|'))
   check('c trajectory: empty state without a build', await settled(() => has(t('panel-trajectory-empty').slice(0, 24)), { timeoutMs: 4000 }))

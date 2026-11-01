@@ -26,6 +26,10 @@ const PALETTE: Record<string, Rgb | undefined> = {
   Z: [128, 128, 128],
 }
 
+/** DST-Star fork: the sidebar mascot samples the same palette (Moon's
+ *  convention) — exported read-only for SidebarMascot. */
+export const WHALE_PALETTE: Readonly<Record<string, Rgb | undefined>> = PALETTE
+
 const fg = (rgb: Rgb): string => foregroundOpenCode(`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`)
 const bg = (rgb: Rgb): string => backgroundOpenCode(`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`)
 const RESET = '\x1b[0m'

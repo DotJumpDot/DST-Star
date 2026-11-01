@@ -176,10 +176,12 @@ shells; verify script green; icon correct in Explorer (no stale cache).
 
 Phase-3 landed notes:
 - Moon's sidebar `BrandHeader` wordmark does NOT exist upstream at the
-  a0630f4 pin (it was a Comet/Moon fork feature) — the wordmark surface
-  here is the splash words (branding.ts) + the tagline, which at this pin
-  routes through i18n `logo-tagline`, not BRAND_TAGLINE (whose deepseek
-  entry is unused).
+  a0630f4 pin (it was a Comet/Moon fork feature). Initially settled for
+  the splash words + tagline; the user asked for the Comet-style sidebar
+  header on day one, so the BrandHeader was ported from Moon the same
+  day (sidebarBrand.ts + SidebarMascot.tsx + SidePanelColumn/Layout
+  wiring — see the CHANGES.md rows; top placement only, Moon's
+  `sidebarLogoPosition: bottom` setting chain not ported).
 - verify-star-transcript.tsx: the DSH_TUI_THEME env alone does NOT theme
   a bare harness render (ThemeProvider's `active` stays null → 'dark');
   the script mounts `<ThemeProvider theme="star">` explicitly and proves
