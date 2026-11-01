@@ -5,6 +5,16 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-02 — Feat: green-night + red-night themes (user ask) —
+  pink-night's structure rotated to one hue family each, exactly like
+  star: greenNightTheme (emerald accent #8FD9A8, mint shimmer, forest
+  tool cards/ink, GREEN_BAR_RAMP) and redNightTheme (soft rose-red
+  accent #F09A9A kept lighter than the alarm error, wine tool
+  cards/ink, RED_BAR_RAMP); registered as dark-role built-ins next to
+  star. verify-star-transcript grew to 38 checks (11 new: palette
+  identity, distinctness, dark roles). Fork repacked + reinstalled —
+  the installer's first real merge run preserved the user's llm-pi-ai
+  provider row (the bug-2 fix working in production).
 - 2026-11-02 — Fix: splash font pinned. The "twisted/deformed" splash
   glyphs were upstream's date-rotated splash font — Nov 1-2 land on the
   `stencil` cutout face (all siblings rotate the same way; stock looks

@@ -231,6 +231,8 @@ export function isThemeColorKey(value: unknown): value is ThemeColorKey {
 export const THEME_NAMES = [
   'dark',
   'star',
+  'green-night',
+  'red-night',
   'dark-ansi',
   'light',
   'pink-night',
@@ -514,6 +516,222 @@ const starlightTheme: Theme = {
   ...STAR_BAR_RAMP,
   ignition: rgb('#CFE8FF'),
   ignitionDim: rgb('#141C33'),
+  cursor: '',
+}
+
+/**
+ * Green Night's context-bar ramp: the night deepens from deep forest to
+ * the mint tip — the same four-step structure as the sakura ramp,
+ * rotated to the forest-green family.
+ */
+const GREEN_BAR_RAMP: ContextBarRamp = {
+  contextBarSystem: rgb('#1C3226'), // deep forest
+  contextBarPrompt: rgb('#2A4A38'),
+  contextBarAssistant: rgb('#3A644C'),
+  contextBarThinking: rgb('#589070'),
+  contextBarTools: rgb('#9FD9B4'), // mint tip
+}
+
+/**
+ * DST-Star (`green-night`): pink-night's concept with ONE hue family —
+ * everything that pink-night paints pink, green-night paints EMERALD:
+ * accent #8FD9A8, mint shimmer #C8F0D4, soft green permission #7BC996,
+ * forest borders #6FBF8A, deep-green ide #3E9C5C, sage second voice
+ * #9BB89A where pink-night ran violet. Text is cool green-tinted ivory
+ * (#EAF4EC) on forest neutrals (#16241A tool cards over #0E1A12 ink,
+ * moss borders #3A5244). The small functional escapes carry over from
+ * pink-night unchanged except where green would self-collide: exec and
+ * strings stay cyan/green against a DEEPER keyword green, and success
+ * shifts to a brighter mint so it reads apart from the accent. Role
+ * base: `dark`. Ignition is the pale mint core over the forest band.
+ */
+const greenNightTheme: Theme = {
+  autoAccept: rgb('#9BB89A'),
+  bashBorder: rgb('#6FBF8A'),
+  accent: rgb('#8FD9A8'),
+  toolNameMutate: rgb('#E5C07B'),
+  toolNameExec: rgb('#72C4CF'),
+  accentShimmer: rgb('#C8F0D4'),
+  activity: rgb('#8FD9A8'),
+  activityShimmer: rgb('#C8F0D4'),
+  permission: rgb('#7BC996'),
+  permissionShimmer: rgb('#B8E8C8'),
+  planMode: rgb('#7FB596'),
+  ide: rgb('#3E9C5C'),
+  promptBorder: rgb('#3A5244'),
+  promptBorderShimmer: rgb('#6FBF8A'),
+  text: rgb('#EAF4EC'),
+  inverseText: rgb('#0E1A12'),
+  inactive: rgb('#96B8A2'),
+  inactiveShimmer: rgb('#B4D4BE'),
+  subtle: rgb('#6A8A76'),
+  suggestion: rgb('#7BC996'),
+  remember: rgb('#7BC996'),
+  background: rgb('#4CAF6E'),
+  success: rgb('#A8E8BC'),
+  error: rgb('#E66A6A'),
+  warning: rgb('#E3B56C'),
+  merged: rgb('#9BB89A'),
+  warningShimmer: rgb('#F0CB8E'),
+  diffAdded: rgb('#2A3A2E'),
+  diffRemoved: rgb('#3E2A2A'),
+  diffAddedDimmed: rgb('#2C362E'),
+  diffRemovedDimmed: rgb('#382828'),
+  diffAddedWord: rgb('#5E9B72'),
+  diffRemovedWord: rgb('#C96B7B'),
+  toolCardBackground: rgb('#16241A'),
+  toolCardBackgroundDim: rgb('#101C14'),
+  toolDotExec: rgb('#72C4CF'),
+  toolDotRead: rgb('#7FB6C9'),
+  toolDotWrite: rgb('#9CC98F'),
+  toolDotWeb: rgb('#8FD9A8'),
+  toolDotTask: rgb('#7FBF94'),
+  syntaxKeyword: rgb('#5FBF7F'),
+  syntaxString: rgb('#9FD9B4'),
+  syntaxComment: rgb('#748A7C'),
+  syntaxNumber: rgb('#E3B56C'),
+  syntaxFunction: rgb('#7FC4CE'),
+  syntaxType: rgb('#A8D9B8'),
+  syntaxVariable: rgb('#D2E4D6'),
+  syntaxOperator: rgb('#96B8A2'),
+  syntaxPunctuation: rgb('#80988A'),
+  syntaxConstant: rgb('#58A878'),
+  professionalBlue: rgb('#6FBF8A'),
+  chromeYellow: rgb('#E3B56C'),
+  mascotBody: rgb('#8FBF7A'),
+  inputBackground: rgb('#000000'),
+  userMessageBackground: '',
+  userMessageBackgroundHover: rgb('#35593F'),
+  messageActionsBackground: rgb('#1E3024'),
+  selectionBg: rgb('#2E4A38'),
+  bashMessageBackgroundColor: rgb('#18271D'),
+  memoryBackgroundColor: rgb('#1C2E22'),
+  rate_limit_fill: rgb('#8FD9A8'),
+  rate_limit_empty: rgb('#24382A'),
+  fastMode: rgb('#E09A58'),
+  fastModeShimmer: rgb('#ECB478'),
+  userPromptLabel: rgb('#FFDF80'),
+  subagentBullet: rgb('#7FBF94'),
+  subagentDescription: rgb('#EAF4EC'),
+  subagentModel: rgb('#96B8A2'),
+  subagentElapsed: rgb('#96B8A2'),
+  subagentToolName: rgb('#8FD9A8'),
+  subagentStatusRunning: rgb('#8FD9A8'),
+  subagentStatusCompleted: rgb('#A8E8BC'),
+  subagentStatusFailed: rgb('#E66A6A'),
+  // The family's bar ramp and crest: ignition is the pale mint core over
+  // the forest band (ignitionDim shares toolCardBackgroundDim's tone).
+  ...GREEN_BAR_RAMP,
+  ignition: rgb('#C8F0D4'),
+  ignitionDim: rgb('#101C14'),
+  cursor: '',
+}
+
+/**
+ * Red Night's context-bar ramp: the night deepens from deep maroon to
+ * the rose tip — the same four-step structure as the sakura ramp,
+ * rotated to the crimson family.
+ */
+const RED_BAR_RAMP: ContextBarRamp = {
+  contextBarSystem: rgb('#3A1C20'), // deep maroon
+  contextBarPrompt: rgb('#572A30'),
+  contextBarAssistant: rgb('#743A42'),
+  contextBarThinking: rgb('#A85A64'),
+  contextBarTools: rgb('#F2B8C0'), // rose tip
+}
+
+/**
+ * DST-Star (`red-night`): pink-night's concept with ONE hue family —
+ * everything that pink-night paints pink, red-night paints CRIMSON:
+ * accent #F09A9A (soft rose-red, kept clearly lighter than the alarm
+ * error #E66A6A), rose shimmer #F8C4C4, soft red permission #E08A8A,
+ * crimson borders #DC7A7A, deep-red ide #C85555, mauve second voice
+ * #C891A0 where pink-night ran violet. Text is warm rose-tinted ivory
+ * (#F4ECEC) on wine neutrals (#261418 tool cards over #1A0E10 ink,
+ * dried-rose borders #5A3A40). The small functional escapes carry over
+ * from pink-night unchanged (green exec/strings stay distinct, cyan
+ * function, amber numbers). Role base: `dark`. Ignition is the pale
+ * rose core over the wine band.
+ */
+const redNightTheme: Theme = {
+  autoAccept: rgb('#C891A0'),
+  bashBorder: rgb('#DC7A7A'),
+  accent: rgb('#F09A9A'),
+  toolNameMutate: rgb('#E5C07B'),
+  toolNameExec: rgb('#72C4CF'),
+  accentShimmer: rgb('#F8C4C4'),
+  activity: rgb('#F09A9A'),
+  activityShimmer: rgb('#F8C4C4'),
+  permission: rgb('#E08A8A'),
+  permissionShimmer: rgb('#F4B8B8'),
+  planMode: rgb('#7FB596'),
+  ide: rgb('#C85555'),
+  promptBorder: rgb('#5A3A40'),
+  promptBorderShimmer: rgb('#DC7A7A'),
+  text: rgb('#F4ECEC'),
+  inverseText: rgb('#1A0E10'),
+  inactive: rgb('#B8969A'),
+  inactiveShimmer: rgb('#D4B4B8'),
+  subtle: rgb('#8A6A70'),
+  suggestion: rgb('#E08A8A'),
+  remember: rgb('#E08A8A'),
+  background: rgb('#D06A6A'),
+  success: rgb('#8FC9A4'),
+  error: rgb('#E65A5A'),
+  warning: rgb('#E3B56C'),
+  merged: rgb('#C891A0'),
+  warningShimmer: rgb('#F0CB8E'),
+  diffAdded: rgb('#2E3A2F'),
+  diffRemoved: rgb('#3E2228'),
+  diffAddedDimmed: rgb('#2F3630'),
+  diffRemovedDimmed: rgb('#362228'),
+  diffAddedWord: rgb('#5E9B72'),
+  diffRemovedWord: rgb('#D97B7B'),
+  toolCardBackground: rgb('#261418'),
+  toolCardBackgroundDim: rgb('#1C0F12'),
+  toolDotExec: rgb('#7FB596'),
+  toolDotRead: rgb('#7FB6C9'),
+  toolDotWrite: rgb('#C99198'),
+  toolDotWeb: rgb('#F09A9A'),
+  toolDotTask: rgb('#D08A90'),
+  syntaxKeyword: rgb('#DC7A7A'),
+  syntaxString: rgb('#8FC9A4'),
+  syntaxComment: rgb('#8A7478'),
+  syntaxNumber: rgb('#E3B56C'),
+  syntaxFunction: rgb('#7FC4CE'),
+  syntaxType: rgb('#E8A8B0'),
+  syntaxVariable: rgb('#E4D2D4'),
+  syntaxOperator: rgb('#B8969A'),
+  syntaxPunctuation: rgb('#98808A'),
+  syntaxConstant: rgb('#D06060'),
+  professionalBlue: rgb('#DC7A7A'),
+  chromeYellow: rgb('#E3B56C'),
+  mascotBody: rgb('#D98A7A'),
+  inputBackground: rgb('#000000'),
+  userMessageBackground: '',
+  userMessageBackgroundHover: rgb('#59333A'),
+  messageActionsBackground: rgb('#321E24'),
+  selectionBg: rgb('#4A2A30'),
+  bashMessageBackgroundColor: rgb('#28181C'),
+  memoryBackgroundColor: rgb('#2C1C20'),
+  rate_limit_fill: rgb('#F09A9A'),
+  rate_limit_empty: rgb('#32222A'),
+  fastMode: rgb('#E09A58'),
+  fastModeShimmer: rgb('#ECB478'),
+  userPromptLabel: rgb('#FFDF80'),
+  subagentBullet: rgb('#D08A90'),
+  subagentDescription: rgb('#F4ECEC'),
+  subagentModel: rgb('#B8969A'),
+  subagentElapsed: rgb('#B8969A'),
+  subagentToolName: rgb('#F09A9A'),
+  subagentStatusRunning: rgb('#F09A9A'),
+  subagentStatusCompleted: rgb('#8FC9A4'),
+  subagentStatusFailed: rgb('#E65A5A'),
+  // The family's bar ramp and crest: ignition is the pale rose core over
+  // the wine band (ignitionDim shares toolCardBackgroundDim's tone).
+  ...RED_BAR_RAMP,
+  ignition: rgb('#F8C4C4'),
+  ignitionDim: rgb('#1C0F12'),
   cursor: '',
 }
 
@@ -1378,6 +1596,10 @@ export function getTheme(themeName: ThemeName): Theme {
       return darkTheme
     case 'star':
       return starlightTheme
+    case 'green-night':
+      return greenNightTheme
+    case 'red-night':
+      return redNightTheme
     case 'dark-ansi':
       return darkAnsiTheme
     // Built-in bases must resolve without touching the custom-theme resolver
@@ -1456,6 +1678,8 @@ export function isLightThemeActive(themeName: ThemeName): boolean {
     theme === darkTheme ||
     theme === darkAnsiTheme ||
     theme === starlightTheme ||
+    theme === greenNightTheme ||
+    theme === redNightTheme ||
     theme === pinkNightTheme ||
     theme === pinkAnsiTheme ||
     theme === claudeDarkTheme ||

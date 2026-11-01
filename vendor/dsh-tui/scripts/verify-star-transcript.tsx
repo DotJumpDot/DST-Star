@@ -88,6 +88,26 @@ function screen(): string { return screenLines().join('\n') }
   check('theme: star plays the dark role', isLightThemeActive('star') === false)
 }
 
+// 2b. The green-night / red-night forks of the same recipe (user ask):
+// pink-night's structure rotated to one hue family each, registered as
+// dark-role built-ins and clearly distinct from star and stock dark.
+{
+  check('theme: green-night is a built-in name', (THEME_NAMES as readonly string[]).includes('green-night'))
+  check('theme: red-night is a built-in name', (THEME_NAMES as readonly string[]).includes('red-night'))
+  const green = getTheme('green-night')
+  const red = getTheme('red-night')
+  check('theme: green-night accent is the emerald green', green.accent === 'rgb(143,217,168)', green.accent)
+  check('theme: green-night ink is green-tinted ivory', green.text === 'rgb(234,244,236)', green.text)
+  check('theme: green-night tool cards are deep forest', green.toolCardBackground === 'rgb(22,36,26)', green.toolCardBackground)
+  check('theme: red-night accent is the soft rose-red', red.accent === 'rgb(240,154,154)', red.accent)
+  check('theme: red-night tool cards are deep wine', red.toolCardBackground === 'rgb(38,20,24)', red.toolCardBackground)
+  check('theme: red-night error stays alarm-red apart from the accent', red.error !== red.accent)
+  const dark = getTheme('dark')
+  check('theme: green/red/star are three distinct palettes', new Set([green, red, getTheme('star'), dark]).size === 4)
+  check('theme: green-night plays the dark role', isLightThemeActive('green-night') === false)
+  check('theme: red-night plays the dark role', isLightThemeActive('red-night') === false)
+}
+
 // 3. A rendered transcript under the star theme: text intact + the theme's
 //    own SGR sequences in the live output. Markdown bakes palette colors
 //    into ANSI (inline code = permission, quote bar = subtle), so a markdown
