@@ -88,7 +88,7 @@ def build():
     body = Image.composite(grad_body, Image.new('RGBA', (SZ, SZ), (0, 0, 0, 0)), body_box)
     icon.alpha_composite(body)
 
-    # --- hot core + cross-flare: the star reads as glowing, not just painted
+    # --- hot core glow: the star reads as glowing, not just painted
     core = Image.new('RGBA', (SZ, SZ), (0, 0, 0, 0))
     cd = ImageDraw.Draw(core)
     cr = 34
@@ -96,12 +96,6 @@ def build():
         a = int(120 * (1 - rr / cr))
         cd.ellipse((cx - rr, cy - rr, cx + rr, cy + rr), fill=(235, 245, 255, a))
     icon.alpha_composite(core.filter(ImageFilter.GaussianBlur(6)))
-    fd = ImageDraw.Draw(icon)
-    for (dx, dy, length, thick) in [(1, 0, 118, 7), (0, 1, 118, 7)]:
-        fd.line([(cx - dx * length, cy - dy * length), (cx + dx * length, cy + dy * length)],
-                fill=(225, 240, 255, 110), width=thick)
-        fd.line([(cx - dx * length, cy - dy * length), (cx + dx * length, cy + dy * length)],
-                fill=(245, 250, 255, 150), width=max(2, thick - 4))
 
     # --- sparkles: family style, blue-white four-point glints
     sd = ImageDraw.Draw(icon)
