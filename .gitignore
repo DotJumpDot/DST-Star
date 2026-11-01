@@ -1,0 +1,39 @@
+# Secrets — never commit
+.env
+.env.*
+*.key
+*.pem
+APIKEY.txt
+secrets/
+
+# Dependencies
+node_modules/
+.pnp/
+
+# Build output
+dist/
+build/
+out/
+lib/
+*.tgz
+
+# Logs & temp
+*.log
+tmp/
+.cache/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.idea/
+
+# Vendored harness reference checkout — too large to track; Phase 1's
+# scripts/setup-vendor.sh clones it at the pin recorded in VENDORED.md.
+vendor/deepseek-harness/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Fork test-harness helpers: tracked verify-* scripts import scripts/lib —
+# keep it in git (a bare `lib/` ignore would drop it; Comet hit this gap).
+!vendor/dsh-tui/scripts/lib/
