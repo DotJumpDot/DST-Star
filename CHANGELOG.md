@@ -5,6 +5,14 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-02 — Fix: desktop shortcut auto-sent the start-in folder as
+  the first prompt — Desktop\DST-Star.lnk carried a stale Arguments
+  field (C:\Users\jamej) since bootstrap; dsts.cmd forwards positionals
+  to dsh and the TUI's initial-prompt path submitted it as a first user
+  message on every launch. scripts/make-shortcut.js now clears
+  Arguments explicitly (WScript keeps fields it doesn't set when
+  re-saving an existing .lnk) and self-verifies the readback; shortcut
+  regenerated — a boot through it now lands with no session.
 - 2026-11-02 — Feat: green-night + red-night themes (user ask) —
   pink-night's structure rotated to one hue family each, exactly like
   star: greenNightTheme (emerald accent #8FD9A8, mint shimmer, forest

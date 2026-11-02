@@ -29,8 +29,13 @@
   }
 
   var lnkPath = shell.SpecialFolders('Desktop') + '\\DST-Star.lnk'
+  // CreateShortcut on an existing .lnk keeps every field this script does
+  // not set — a stale Arguments survives regeneration, and dsts.cmd forwards
+  // positionals to dsh, where the TUI's initial-prompt path auto-submits
+  // them as the first message. Always write the field, even when clearing.
   var lnk = shell.CreateShortcut(lnkPath)
   lnk.TargetPath = target
+  lnk.Arguments = ''
   lnk.WorkingDirectory = home
   lnk.WindowStyle = 1 // SW_SHOWNORMAL
   lnk.IconLocation = icon + ',0'
@@ -39,9 +44,9 @@
 
   // Self-verify: reopen the saved file and read the stored values back.
   var back = shell.CreateShortcut(lnkPath)
-  if (back.TargetPath.toLowerCase() !== target.toLowerCase()) {
-    WScript.Echo('ERROR: readback mismatch: ' + back.TargetPath)
+  if (back.TargetPath.toLowerCase() !== target.toLowerCase() || back.Arguments !== '') {
+    WScript.Echo('ERROR: readback mismatch: target=' + back.TargetPath + ' arguments=[' + back.Arguments + ']')
     WScript.Quit(1)
   }
-  WScript.Echo('verified: target = ' + back.TargetPath + ', icon = ' + back.IconLocation)
+  WScript.Echo('verified: target = ' + back.TargetPath + ', arguments = [], icon = ' + back.IconLocation)
 })()
