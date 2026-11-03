@@ -628,110 +628,112 @@ const greenNightTheme: Theme = {
 }
 
 /**
- * Red Night's context-bar ramp: the night deepens from deep maroon to
- * the rose tip — the same four-step structure as the sakura ramp,
- * rotated to the crimson family.
+ * Red Night's context-bar ramp: the night deepens from deep umber to the
+ * salmon tip — the same four-step structure as the sakura ramp, rotated
+ * to the signal-red family.
  */
 const RED_BAR_RAMP: ContextBarRamp = {
-  contextBarSystem: rgb('#3A1C20'), // deep maroon
-  contextBarPrompt: rgb('#572A30'),
-  contextBarAssistant: rgb('#743A42'),
-  contextBarThinking: rgb('#A85A64'),
-  contextBarTools: rgb('#F2B8C0'), // rose tip
+  contextBarSystem: rgb('#2B1611'), // deep umber red
+  contextBarPrompt: rgb('#422018'),
+  contextBarAssistant: rgb('#5E2A1E'),
+  contextBarThinking: rgb('#96382A'),
+  contextBarTools: rgb('#FF8A74'), // salmon tip
 }
 
 /**
- * DST-Star (`red-night`): pink-night's concept with ONE hue family —
- * everything that pink-night paints pink, red-night paints CRIMSON:
- * accent #F09A9A (soft rose-red, kept clearly lighter than the alarm
- * error #E66A6A), rose shimmer #F8C4C4, soft red permission #E08A8A,
- * crimson borders #DC7A7A, deep-red ide #C85555, mauve second voice
- * #C891A0 where pink-night ran violet. Text is warm rose-tinted ivory
- * (#F4ECEC) on wine neutrals (#261418 tool cards over #1A0E10 ink,
- * dried-rose borders #5A3A40). The small functional escapes carry over
- * from pink-night unchanged (green exec/strings stay distinct, cyan
- * function, amber numbers). Role base: `dark`. Ignition is the pale
- * rose core over the wine band.
+ * DST-Star (`red-night`): opencode's signal red on black (user-sampled
+ * accent #FF3E30 off opencode's input bar), applied to pink-night's
+ * one-hue recipe — everything that pink-night paints pink, red-night
+ * paints SIGNAL RED: accent #FF3E30, salmon shimmer #FF8A78, warm
+ * permission #FF6B5A, red borders #E0503F, deep-red ide #D84836, warm
+ * clay second voice #C68272 where pink-night ran violet. Text is warm
+ * ivory (#F4ECE8) on near-black warm neutrals (#201110 tool cards over
+ * #150C0A ink, ember borders #5A2E28) — the input box stays pure black,
+ * like opencode's. The alarm error shifts COOL crimson (#F04258) so it
+ * stays distinct from the warm accent; the small functional escapes
+ * carry over from pink-night unchanged (green exec/strings stay
+ * distinct, cyan function, amber numbers). Role base: `dark`. Ignition
+ * is the pale warm core over the ember band.
  */
 const redNightTheme: Theme = {
-  autoAccept: rgb('#C891A0'),
-  bashBorder: rgb('#DC7A7A'),
-  accent: rgb('#F09A9A'),
+  autoAccept: rgb('#C68272'),
+  bashBorder: rgb('#E0503F'),
+  accent: rgb('#FF3E30'),
   toolNameMutate: rgb('#E5C07B'),
   toolNameExec: rgb('#72C4CF'),
-  accentShimmer: rgb('#F8C4C4'),
-  activity: rgb('#F09A9A'),
-  activityShimmer: rgb('#F8C4C4'),
-  permission: rgb('#E08A8A'),
-  permissionShimmer: rgb('#F4B8B8'),
+  accentShimmer: rgb('#FF8A78'),
+  activity: rgb('#FF3E30'),
+  activityShimmer: rgb('#FF8A78'),
+  permission: rgb('#FF6B5A'),
+  permissionShimmer: rgb('#FFA796'),
   planMode: rgb('#7FB596'),
-  ide: rgb('#C85555'),
-  promptBorder: rgb('#5A3A40'),
-  promptBorderShimmer: rgb('#DC7A7A'),
-  text: rgb('#F4ECEC'),
-  inverseText: rgb('#1A0E10'),
-  inactive: rgb('#B8969A'),
-  inactiveShimmer: rgb('#D4B4B8'),
-  subtle: rgb('#8A6A70'),
-  suggestion: rgb('#E08A8A'),
-  remember: rgb('#E08A8A'),
-  background: rgb('#D06A6A'),
+  ide: rgb('#D84836'),
+  promptBorder: rgb('#5A2E28'),
+  promptBorderShimmer: rgb('#E0503F'),
+  text: rgb('#F4ECE8'),
+  inverseText: rgb('#160C09'),
+  inactive: rgb('#C09A90'),
+  inactiveShimmer: rgb('#D8B4AA'),
+  subtle: rgb('#8A6A62'),
+  suggestion: rgb('#FF6B5A'),
+  remember: rgb('#FF6B5A'),
+  background: rgb('#D86050'),
   success: rgb('#8FC9A4'),
-  error: rgb('#E65A5A'),
+  error: rgb('#F04258'),
   warning: rgb('#E3B56C'),
-  merged: rgb('#C891A0'),
+  merged: rgb('#C68272'),
   warningShimmer: rgb('#F0CB8E'),
   diffAdded: rgb('#2E3A2F'),
-  diffRemoved: rgb('#3E2228'),
+  diffRemoved: rgb('#40201E'),
   diffAddedDimmed: rgb('#2F3630'),
-  diffRemovedDimmed: rgb('#362228'),
+  diffRemovedDimmed: rgb('#38201E'),
   diffAddedWord: rgb('#5E9B72'),
-  diffRemovedWord: rgb('#D97B7B'),
-  toolCardBackground: rgb('#261418'),
-  toolCardBackgroundDim: rgb('#1C0F12'),
+  diffRemovedWord: rgb('#E06050'),
+  toolCardBackground: rgb('#201110'),
+  toolCardBackgroundDim: rgb('#150C0A'),
   toolDotExec: rgb('#7FB596'),
   toolDotRead: rgb('#7FB6C9'),
-  toolDotWrite: rgb('#C99198'),
-  toolDotWeb: rgb('#F09A9A'),
-  toolDotTask: rgb('#D08A90'),
-  syntaxKeyword: rgb('#DC7A7A'),
+  toolDotWrite: rgb('#D98272'),
+  toolDotWeb: rgb('#FF6B5A'),
+  toolDotTask: rgb('#C97A6A'),
+  syntaxKeyword: rgb('#E0503F'),
   syntaxString: rgb('#8FC9A4'),
-  syntaxComment: rgb('#8A7478'),
+  syntaxComment: rgb('#8A7872'),
   syntaxNumber: rgb('#E3B56C'),
   syntaxFunction: rgb('#7FC4CE'),
-  syntaxType: rgb('#E8A8B0'),
-  syntaxVariable: rgb('#E4D2D4'),
-  syntaxOperator: rgb('#B8969A'),
-  syntaxPunctuation: rgb('#98808A'),
-  syntaxConstant: rgb('#D06060'),
-  professionalBlue: rgb('#DC7A7A'),
+  syntaxType: rgb('#E8A096'),
+  syntaxVariable: rgb('#E4D8D2'),
+  syntaxOperator: rgb('#B8968E'),
+  syntaxPunctuation: rgb('#98827A'),
+  syntaxConstant: rgb('#C4442E'),
+  professionalBlue: rgb('#E0503F'),
   chromeYellow: rgb('#E3B56C'),
   mascotBody: rgb('#D98A7A'),
   inputBackground: rgb('#000000'),
   userMessageBackground: '',
-  userMessageBackgroundHover: rgb('#59333A'),
-  messageActionsBackground: rgb('#321E24'),
-  selectionBg: rgb('#4A2A30'),
-  bashMessageBackgroundColor: rgb('#28181C'),
-  memoryBackgroundColor: rgb('#2C1C20'),
-  rate_limit_fill: rgb('#F09A9A'),
-  rate_limit_empty: rgb('#32222A'),
+  userMessageBackgroundHover: rgb('#4A2620'),
+  messageActionsBackground: rgb('#2A1916'),
+  selectionBg: rgb('#46221C'),
+  bashMessageBackgroundColor: rgb('#221410'),
+  memoryBackgroundColor: rgb('#261814'),
+  rate_limit_fill: rgb('#FF6B5A'),
+  rate_limit_empty: rgb('#2E201C'),
   fastMode: rgb('#E09A58'),
   fastModeShimmer: rgb('#ECB478'),
   userPromptLabel: rgb('#FFDF80'),
-  subagentBullet: rgb('#D08A90'),
-  subagentDescription: rgb('#F4ECEC'),
-  subagentModel: rgb('#B8969A'),
-  subagentElapsed: rgb('#B8969A'),
-  subagentToolName: rgb('#F09A9A'),
-  subagentStatusRunning: rgb('#F09A9A'),
+  subagentBullet: rgb('#C97A6A'),
+  subagentDescription: rgb('#F4ECE8'),
+  subagentModel: rgb('#B8968E'),
+  subagentElapsed: rgb('#B8968E'),
+  subagentToolName: rgb('#FF6B5A'),
+  subagentStatusRunning: rgb('#FF6B5A'),
   subagentStatusCompleted: rgb('#8FC9A4'),
-  subagentStatusFailed: rgb('#E65A5A'),
-  // The family's bar ramp and crest: ignition is the pale rose core over
-  // the wine band (ignitionDim shares toolCardBackgroundDim's tone).
+  subagentStatusFailed: rgb('#F04258'),
+  // The family's bar ramp and crest: ignition is the pale warm core over
+  // the ember band (ignitionDim shares toolCardBackgroundDim's tone).
   ...RED_BAR_RAMP,
-  ignition: rgb('#F8C4C4'),
-  ignitionDim: rgb('#1C0F12'),
+  ignition: rgb('#FFC9B8'),
+  ignitionDim: rgb('#150C0A'),
   cursor: '',
 }
 

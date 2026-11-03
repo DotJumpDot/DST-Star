@@ -5,6 +5,14 @@ One line per meaningful change, newest first. Format:
 list under its date line. Entries mirror the commit log; commits
 themselves follow the style in `AGENTS.md`.
 
+- 2026-11-03 — Fix: red-night reworked to opencode's signal red (user
+  ask) — the rose #F09A9A accent read pink, so the palette re-anchors
+  on opencode's input-bar red sampled off the user's screenshot
+  (#FF3E30): salmon shimmer, warm clay second voice, near-black ember
+  neutrals (#201110 cards, pure-black input like opencode), umber→
+  salmon bar ramp; alarm error shifted cool crimson #F04258 to stay
+  distinct from the warm accent; green/cyan/amber escapes kept.
+  verify-star-transcript expectations updated, 38/38.
 - 2026-11-02 — Fix: desktop shortcut auto-sent the start-in folder as
   the first prompt — Desktop\DST-Star.lnk carried a stale Arguments
   field (C:\Users\jamej) since bootstrap; dsts.cmd forwards positionals
