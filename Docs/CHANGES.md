@@ -1,7 +1,22 @@
-# Modified files (vs upstream pin `a0630f4`)
+# Modified files (vs upstream pin `224f847d` / v0.19.0)
 
 House rule: one line per file, why it changed. New upstream pins re-apply
 this list. Commits and pushes follow the AGENTS.md commit style.
+
+Upstream migration round (2026-11-09, whole family with DST-Comet +
+DST-Moon: TUI 0.18.0 → 0.19.0, global engine 0.2.1-rc.2 → 0.2.2-rc.1):
+`vendor/dsh-tui` merged onto upstream tag v0.19.0 with ZERO conflicts —
+Star's 32-file surface (paths.ts data dir, star/green-night/red-night
+themes, branding, navigator/one-line-card parity, verify-star-transcript)
+does not overlap anything upstream changed in the 0.18.0→0.19.0 window,
+so the merge brought upstream's #1794 channel hints, session-restore
+batch, /update, onboarding login, git-worktree plugin and Agent.model
+selection in whole. `patch-surface.snapshot.json` regenerated. The dsh-std
+submodule pin is UNCHANGED (`614dfa1`) at v0.19.0. Star installs no engine
+tarballs — the `dst-star` profile rides the global host, now
+`@deepseek-ai/dsh@0.2.2-rc.1` (installed with allow-scripts so node-pty /
+koffi natives rebuilt). Profile patch-yml unchanged vs pre-install
+snapshot. Fresh `dsts` required.
 
 The ONLY mandatory code diff is `src/utils/paths.ts` (fork data dir). Every
 Phase-3 identity row below is deliberate, documented drift — re-justify
