@@ -1,7 +1,31 @@
-# Modified files (vs upstream pin `224f847d` / v0.19.0)
+# Modified files (vs upstream pin `8958f08` / v0.20.0)
 
 House rule: one line per file, why it changed. New upstream pins re-apply
 this list. Commits and pushes follow the AGENTS.md commit style.
+
+Upstream migration round v0.19.0 → v0.20.0 (2026-11-13, whole family with
+DST-Comet `14844a1daa` + DST-Moon `e2dadb1`; TUI-only — the global engine
+stays 0.2.2-rc.1 because rc.2 removes spawn_teammate and its catalog v3
+breaks shared session libraries; the 0.20.0 TUI shape-probes the host and
+officially supports rc.1): `vendor/dsh-tui` merged onto upstream tag
+v0.20.0 with ZERO conflicts again — Star's fork surface auto-merged
+cleanly through all 8 overlapping files. Took the family set:
+waiting-state notifications (#1929-31), git-style diff hunks (#1957),
+render fixes (#1922/#1924/#1936), partial checkpoint summaries (#1943),
+jumpBack (default off). `patch-surface.snapshot.json` regenerated
+(comparison moved to 0.2.2-rc.2). **Star-only gate fix in
+scripts/verify-startup-argv.mjs** (same as DST-Moon's): upstream's new
+Claude-kernel refusal cases write markers under a hard-coded
+`<home>/.dsh-tui`, but this fork's default data dir is `~/.dst-star` —
+the spawn env now pins `DSH_TUI_STATE_DIR` at the stub and per-case dirs
+(the cross-fork launcher-pin convention honored by utils/paths.ts);
+227/241 → 241/241. verify:build baseline 7/103: upstream-known flakes
+(contract, btw — pass standalone; terminal-images env-only) + the 4
+family pre-existing baseline fails (runtime-themes, theme-preview,
+history-search, session-mounts — proven failing on the untouched 0.19.0
+tree by stash differential; they predate this migration). Star installs
+no engine tarballs and carries no @deepseek-ai junctions — the dst-star
+profile rides the global host; installed 0.20.0 + dump-config exit 0.
 
 Upstream migration round (2026-11-09, whole family with DST-Comet +
 DST-Moon: TUI 0.18.0 → 0.19.0, global engine 0.2.1-rc.2 → 0.2.2-rc.1):
